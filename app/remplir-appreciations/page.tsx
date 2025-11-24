@@ -1,6 +1,6 @@
 
 
-export default function RemplirAppreciations() {
+export default async function RemplirAppreciations() {
     return (
         <div>
             <h1>Remplir Appréciations</h1>
