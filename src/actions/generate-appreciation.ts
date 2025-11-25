@@ -1,4 +1,4 @@
-"use server";
+"use client";
 
 import {
   teacherClassCouncil,
@@ -13,7 +13,7 @@ import { loginUsingCredentials } from "@/lib/pawdirecte";
 import {
   buildStudentRecap,
   findFirstPrincipalClass
-} from "@/server/appreciations";
+} from "@/actions/appreciations";
 import type {
   Credentials,
   GeneratedAppreciation,

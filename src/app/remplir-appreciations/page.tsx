@@ -23,8 +23,8 @@ import {
 import {
   generateBatchAppreciations,
   generateGeneralAppreciation
-} from "@/server/generate-appreciation";
-import { updateStudentAppreciation } from "@/server/update-appreciation";
+} from "@/actions/generate-appreciation";
+import { updateStudentAppreciation } from "@/actions/update-appreciation";
 import type { GeneratedAppreciation } from "@/types/appreciations";
 import {
   AlertDialog,

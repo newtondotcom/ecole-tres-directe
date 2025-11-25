@@ -7,7 +7,7 @@ import type {
   StudentSummary,
   Credentials
 } from "@/types/appreciations";
-import { fetchAppreciationsData } from "@/server/appreciations";
+import { fetchAppreciationsData } from "@/actions/appreciations";
 
 export type Step =
   | "idle"
