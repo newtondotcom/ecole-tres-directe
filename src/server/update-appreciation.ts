@@ -3,6 +3,7 @@
 import {
   teacherClassCouncil,
   updateTeacherClassCouncilStudent,
+  type Session,
   type TeacherClassCouncilStudentUpdatePayload
 } from "pawdirecte-teacher";
 
@@ -15,6 +16,9 @@ type UpdateStudentAppreciationParams = {
   classId: number;
   periodCode: string;
   appreciationText: string;
+  // Optional: if session and account are provided, skip re-authentication
+  session?: Session;
+  accountId?: number;
 };
 
 export async function updateStudentAppreciation({
@@ -22,18 +26,30 @@ export async function updateStudentAppreciation({
   studentId,
   classId,
   periodCode,
-  appreciationText
+  appreciationText,
+  session: providedSession,
+  accountId: providedAccountId
 }: UpdateStudentAppreciationParams) {
-  // Re-authenticate to get fresh session
-  const { session, account } = await loginUsingCredentials(
-    credentials.username,
-    credentials.password
-  );
+  // Re-authenticate only if session not provided
+  let session: Session;
+  let accountId: number;
+
+  if (providedSession && providedAccountId) {
+    session = providedSession;
+    accountId = providedAccountId;
+  } else {
+    const { session: newSession, account } = await loginUsingCredentials(
+      credentials.username,
+      credentials.password
+    );
+    session = newSession;
+    accountId = account.id;
+  }
 
   // Fetch the council to get current student data
   const council = await teacherClassCouncil(
     session,
-    account.id,
+    accountId,
     classId,
     periodCode
   );
@@ -72,7 +88,7 @@ export async function updateStudentAppreciation({
   // Update the student's appreciation
   const result = await updateTeacherClassCouncilStudent(
     session,
-    account.id,
+    accountId,
     classId,
     periodCode,
     payload

@@ -171,44 +171,32 @@ export async function generateBatchAppreciations({
   }
 
   const selectedStudents = council.students.slice(0, limit);
+  const results: GeneratedAppreciation[] = [];
 
-  // Traiter tous les élèves en parallèle
-  const studentPromises = selectedStudents.map(async (student) => {
-    try {
-      const recap = await buildStudentRecap(session, student);
-      const appreciation = await generateGeneralAppreciation({
-        prompt,
-        subjects: recap.subjects
-      });
+  for (const student of selectedStudents) {
+    const recap = await buildStudentRecap(session, student);
+    const appreciation = await generateGeneralAppreciation({
+      prompt,
+      subjects: recap.subjects
+    });
 
-      await uploadGeneratedAppreciation({
-        session,
-        teacherId: account.id,
-        classId: classSummary.classId,
-        periodCode: classSummary.periodCode,
-        council,
-        student,
-        appreciationText: appreciation
-      });
+    await uploadGeneratedAppreciation({
+      session,
+      teacherId: account.id,
+      classId: classSummary.classId,
+      periodCode: classSummary.periodCode,
+      council,
+      student,
+      appreciationText: appreciation
+    });
 
-      return {
-        studentId: recap.studentId,
-        studentName: recap.studentName,
-        appreciation
-      };
-    } catch (error) {
-      // En cas d'erreur, retourner un résultat avec l'erreur pour ne pas bloquer les autres
-      const errorMessage =
-        error instanceof Error ? error.message : "Erreur inconnue";
-      return {
-        studentId: student.id,
-        studentName: `${student.firstName} ${student.lastName}`.trim(),
-        appreciation: `[ERREUR: ${errorMessage}]`
-      };
-    }
-  });
+    results.push({
+      studentId: recap.studentId,
+      studentName: recap.studentName,
+      appreciation
+    });
+  }
 
-  const results = await Promise.all(studentPromises);
   return results;
 }
 
