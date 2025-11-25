@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import {
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Card,
   CardContent,
@@ -19,7 +20,7 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { generateGeneralAppreciation } from "@/server/generate-appreciation";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",
@@ -54,6 +55,9 @@ export default function RemplirAppreciations() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [promptInstruction, setPromptInstruction] = useState("");
+  const [generatedAppreciation, setGeneratedAppreciation] = useState("");
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [isGenerating, startGeneration] = useTransition();
   const hasRecap = Boolean(firstStudentRecap);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -217,7 +221,7 @@ export default function RemplirAppreciations() {
                   <Card className="h-full">
                     <CardHeader>
                       <CardTitle>
-                        Appercu de la rédaction de l&apos;appréciation générale
+                        Appercu de la génération de l&apos;appréciation générale
                       </CardTitle>
                       <CardDescription>
                         {firstStudentRecap.studentName} —{" "}
@@ -229,7 +233,7 @@ export default function RemplirAppreciations() {
                         <Label htmlFor="prompt">Consigne pour la rédaction</Label>
                         <Textarea
                           id="prompt"
-                          placeholder='Ex: "Rédige ces appréciations avec un ton encourageant si la moyenne est bonne."'
+                          placeholder='Ex: "Rédige une appréciation globale encourageante et précise, avec un ton neutre."'
                           rows={3}
                           value={promptInstruction}
                           onChange={(event) =>
@@ -265,8 +269,54 @@ export default function RemplirAppreciations() {
                       </ScrollArea>
                     </CardContent>
                     <CardFooter className="justify-end">
-                      <Button>Voir l&apos;appréciation générale générée</Button>
+                      <Button
+                        type="button"
+                        disabled={isGenerating}
+                        onClick={() => {
+                          if (!firstStudentRecap) return;
+                          startGeneration(async () => {
+                            try {
+                              const appreciation = await generateGeneralAppreciation(
+                                {
+                                  prompt: promptInstruction,
+                                  subjects: firstStudentRecap.subjects
+                                }
+                              );
+                              setGeneratedAppreciation(appreciation);
+                              setGenerationError(null);
+                            } catch (error) {
+                              const message =
+                                error instanceof Error
+                                  ? error.message
+                                  : "Impossible de générer l'appréciation.";
+                              setGenerationError(message);
+                            }
+                          });
+                        }}
+                      >
+                        {isGenerating
+                          ? "Génération en cours..."
+                          : "Voir l'appréciation générale générée"}
+                      </Button>
                     </CardFooter>
+                    {generationError && (
+                      <CardFooter>
+                        <p className="text-sm text-red-600">{generationError}</p>
+                      </CardFooter>
+                    )}
+                    {generatedAppreciation && (
+                      <CardContent>
+                        <Label className="mb-2 block" htmlFor="generatedText">
+                          Appréciation générée
+                        </Label>
+                        <Textarea
+                          id="generatedText"
+                          readOnly
+                          value={generatedAppreciation}
+                          className="min-h-32"
+                        />
+                      </CardContent>
+                    )}
                   </Card>
                 </motion.div>
               )}
