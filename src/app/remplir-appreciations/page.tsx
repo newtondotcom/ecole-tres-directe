@@ -239,7 +239,7 @@ export default function RemplirAppreciations() {
                         />
                       </div>
 
-                      <ScrollArea className="max-h-[20rem] rounded-md border border-neutral-100">
+                      <ScrollArea className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
                         <div className="space-y-3 p-3 pr-4">
                           {firstStudentRecap.subjects.map((subject) => (
                             <Card key={`${subject.subjectName}-${subject.teachers}`}>
