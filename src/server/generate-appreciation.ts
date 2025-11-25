@@ -1,6 +1,13 @@
 "use server";
 
-import { teacherClassCouncil } from "pawdirecte-teacher";
+import {
+  teacherClassCouncil,
+  updateTeacherClassCouncilStudent,
+  type Session,
+  type TeacherClassCouncil,
+  type TeacherClassCouncilStudent,
+  type TeacherClassCouncilStudentUpdatePayload
+} from "pawdirecte-teacher";
 
 import { loginUsingCredentials } from "@/lib/pawdirecte";
 import {
@@ -164,22 +171,86 @@ export async function generateBatchAppreciations({
   }
 
   const selectedStudents = council.students.slice(0, limit);
-  const results: GeneratedAppreciation[] = [];
 
-  for (const student of selectedStudents) {
-    const recap = await buildStudentRecap(session, student);
-    const appreciation = await generateGeneralAppreciation({
-      prompt,
-      subjects: recap.subjects
-    });
+  // Traiter tous les élèves en parallèle
+  const studentPromises = selectedStudents.map(async (student) => {
+    try {
+      const recap = await buildStudentRecap(session, student);
+      const appreciation = await generateGeneralAppreciation({
+        prompt,
+        subjects: recap.subjects
+      });
 
-    results.push({
-      studentId: recap.studentId,
-      studentName: recap.studentName,
-      appreciation
-    });
-  }
+      await uploadGeneratedAppreciation({
+        session,
+        teacherId: account.id,
+        classId: classSummary.classId,
+        periodCode: classSummary.periodCode,
+        council,
+        student,
+        appreciationText: appreciation
+      });
 
+      return {
+        studentId: recap.studentId,
+        studentName: recap.studentName,
+        appreciation
+      };
+    } catch (error) {
+      // En cas d'erreur, retourner un résultat avec l'erreur pour ne pas bloquer les autres
+      const errorMessage =
+        error instanceof Error ? error.message : "Erreur inconnue";
+      return {
+        studentId: student.id,
+        studentName: `${student.firstName} ${student.lastName}`.trim(),
+        appreciation: `[ERREUR: ${errorMessage}]`
+      };
+    }
+  });
+
+  const results = await Promise.all(studentPromises);
   return results;
+}
+
+type UploadGeneratedAppreciationParams = {
+  session: Session;
+  teacherId: number;
+  classId: number;
+  periodCode: string;
+  council: TeacherClassCouncil;
+  student: TeacherClassCouncilStudent;
+  appreciationText: string;
+};
+
+async function uploadGeneratedAppreciation({
+  session,
+  teacherId,
+  classId,
+  periodCode,
+  council,
+  student,
+  appreciationText
+}: UploadGeneratedAppreciationParams) {
+  const payload: TeacherClassCouncilStudentUpdatePayload = {
+    student: {
+      ...student,
+      appreciationPrincipalTeacher: {
+        ...student.appreciationPrincipalTeacher,
+        text: appreciationText.trim(),
+        date: new Date()
+      }
+    },
+    classAppreciation: council.classAppreciation
+      ? { ...council.classAppreciation, date: new Date() }
+      : undefined
+  };
+
+  await updateTeacherClassCouncilStudent(
+    session,
+    teacherId,
+    classId,
+    periodCode,
+    payload
+  );
 }
 
