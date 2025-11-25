@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { MultiStepLoader as Loader } from "../ui/multi-step-loader";
 import { IconSquareRoundedX } from "@tabler/icons-react";
 

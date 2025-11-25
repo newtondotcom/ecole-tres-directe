@@ -1,4 +1,4 @@
-import { MultiStepLoaderDemo } from "@/components/etd/loader";
+import { MultiStepLoaderDemo } from "@/src/components/etd/loader";
 
 export default function Home() {
   return (
