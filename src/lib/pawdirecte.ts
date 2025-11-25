@@ -2,11 +2,63 @@ import { teacherLevelsList, teacherClassCouncil, teacherGrades, setAccessToken, 
   
 export const uuid = "your-device-uuid";
 
+async function setupGtkToken() {
+  await new Promise<void>((resolve, reject) => {
+      const handleMessage = (event) => {
+          if (event.data && event.data.type === "EDPU_MESSAGE") {
+              window.removeEventListener("message", handleMessage);
+              const message = event.data.payload;
+              console.log(message);
+              if (message.action === "gtkRulesUpdated") {
+                  resolve();
+              } else if (message.action === "noGtkCookie" || message.action === "noCookie") {
+                  reject(new Error("EDPUNoCookie"));
+              }
+          }
+      }
+
+      window.addEventListener("message", handleMessage);
+      fetch(`https://api.ecoledirecte.com/v3/login.awp?gtk=1&v=4.69.1`)
+          .then(() => {
+              setTimeout(() => {
+                  window.removeEventListener("message", handleMessage);
+                  reject(new Error("NoEDPUResponse"));
+              }, 3000);
+          })
+          .catch(() => {
+              if (navigator.onLine)
+                  // the error is probably due to the extension not being installed
+                  throw new Error("EDPUNotInstalled");
+          });
+  }).catch((error) => {
+      console.error(error);
+      throw error;
+  });
+}
+
 export async function loginUsingCredentials(
   username: string,
   password: string
 ) {
   console.info("Initializing a session using credentials...");
+
+  try {
+    await setupGtkToken();
+} catch (error) {
+    console.error(error);
+    console.log("Échec de la connexion");
+    if (error instanceof Error && error.message === "NoEDPUResponse") {
+        console.log("Nous n'avons pas réussi à communiquer avec l'extension EDP Unblock, vérifiez qu'elle soit à jour et/ou qu'elle ait les permissions nécessaires.");
+    } else if (error instanceof Error && error.message === "EDPUNoCookie") {
+        console.log("L'extension EDP Unblock n'a pas réussi à accéder aux cookies nécessaires pour votre connexion, vérifiez qu'elle soit à jour et/ou qu'elle ait les permissions nécessaires.");
+    } else if (error instanceof Error && error.message === "EDPUNotInstalled") {
+        console.log("L'extension EDP Unblock n'est pas installée, veuillez l'installer.");
+    } else {
+        console.log("Il y a eu un problème lors de l'obtention des cookies nécessaires à votre connexion, réessayez plus tard.");
+    }
+    throw new Error("LoginFailed");
+}
+
   const session: Session = { username, device_uuid: uuid };
 
   const accounts = await login(session, password).catch(async (error) => {
