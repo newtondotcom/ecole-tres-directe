@@ -24,6 +24,7 @@ import {
   generateBatchAppreciations,
   generateGeneralAppreciation
 } from "@/server/generate-appreciation";
+import { updateStudentAppreciation } from "@/server/update-appreciation";
 import type { GeneratedAppreciation } from "@/types/appreciations";
 import {
   AlertDialog,
@@ -77,6 +78,9 @@ export default function RemplirAppreciations() {
   const [batchResults, setBatchResults] = useState<GeneratedAppreciation[] | null>(null);
   const [batchError, setBatchError] = useState<string | null>(null);
   const [isBatching, startBatchGeneration] = useTransition();
+  const [isUploading, startUpload] = useTransition();
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const hasRecap = Boolean(firstStudentRecap);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -388,17 +392,79 @@ export default function RemplirAppreciations() {
                       </CardFooter>
                     )}
                     {generatedAppreciation && (
-                      <CardContent>
-                        <Label className="mb-2 block" htmlFor="generatedText">
-                          Appréciation générée
-                        </Label>
-                        <Textarea
-                          id="generatedText"
-                          readOnly
-                          value={generatedAppreciation}
-                          className="min-h-32"
-                        />
-                      </CardContent>
+                      <>
+                        <CardContent>
+                          <Label className="mb-2 block" htmlFor="generatedText">
+                            Appréciation générée
+                          </Label>
+                          <Textarea
+                            id="generatedText"
+                            readOnly
+                            value={generatedAppreciation}
+                            className="min-h-32"
+                          />
+                        </CardContent>
+                        <CardFooter>
+                          <Button
+                            type="button"
+                            disabled={
+                              isUploading ||
+                              !credentials ||
+                              !classSummary ||
+                              !firstStudentRecap
+                            }
+                            onClick={() => {
+                              if (
+                                !credentials ||
+                                !classSummary ||
+                                !firstStudentRecap
+                              ) {
+                                setUploadError(
+                                  "Données manquantes pour l'upload."
+                                );
+                                return;
+                              }
+                              startUpload(async () => {
+                                try {
+                                  setUploadError(null);
+                                  setUploadSuccess(false);
+                                  await updateStudentAppreciation({
+                                    credentials,
+                                    studentId: firstStudentRecap.studentId,
+                                    classId: classSummary.classId,
+                                    periodCode: classSummary.periodCode,
+                                    appreciationText: generatedAppreciation
+                                  });
+                                  setUploadSuccess(true);
+                                } catch (error) {
+                                  const message =
+                                    error instanceof Error
+                                      ? error.message
+                                      : "Impossible d'uploader l'appréciation.";
+                                  setUploadError(message);
+                                  setUploadSuccess(false);
+                                }
+                              });
+                            }}
+                          >
+                            {isUploading
+                              ? "Upload en cours..."
+                              : "Uploader l'appréciation"}
+                          </Button>
+                        </CardFooter>
+                        {uploadError && (
+                          <CardFooter>
+                            <p className="text-sm text-red-600">{uploadError}</p>
+                          </CardFooter>
+                        )}
+                        {uploadSuccess && (
+                          <CardFooter>
+                            <p className="text-sm text-green-600">
+                              Appréciation uploadée avec succès !
+                            </p>
+                          </CardFooter>
+                        )}
+                      </>
                     )}
                     {batchError && (
                       <CardFooter>

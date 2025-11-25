@@ -1,33 +1,85 @@
-import { TeacherClassCouncilStudentUpdatePayload, updateTeacherClassCouncilStudent } from "pawdirecte-teacher";
+"use server";
 
-export async function generateGeneralAppreciation(){
-const council = await teacherClassCouncil(session, teacherId, classId, periodId);
-if (!council.students.length) {
-  throw new Error("No students returned by the class council endpoint.");
-}
+import {
+  teacherClassCouncil,
+  updateTeacherClassCouncilStudent,
+  type TeacherClassCouncilStudentUpdatePayload
+} from "pawdirecte-teacher";
 
-const [student] = council.students;
-const payload : TeacherClassCouncilStudentUpdatePayload = {
-  student: {
-    ...student,
-    appreciationPrincipalTeacher: {
-      ...student.appreciationPrincipalTeacher,
-      text: `Updated via example on ${new Date().toISOString()}`,
-      date: new Date()
-    },
-  },
-  classAppreciation: {
-    ...council.classAppreciation,
-    date: new Date()
-  }
+import { loginUsingCredentials } from "@/lib/pawdirecte";
+import type { Credentials } from "@/types/appreciations";
+
+type UpdateStudentAppreciationParams = {
+  credentials: Credentials;
+  studentId: number;
+  classId: number;
+  periodCode: string;
+  appreciationText: string;
 };
 
-const result = await updateTeacherClassCouncilStudent(
-  session,
-  teacherId,
+export async function updateStudentAppreciation({
+  credentials,
+  studentId,
   classId,
-  periodId,
-  payload
-);
+  periodCode,
+  appreciationText
+}: UpdateStudentAppreciationParams) {
+  // Re-authenticate to get fresh session
+  const { session, account } = await loginUsingCredentials(
+    credentials.username,
+    credentials.password
+  );
 
+  // Fetch the council to get current student data
+  const council = await teacherClassCouncil(
+    session,
+    account.id,
+    classId,
+    periodCode
+  );
+
+  if (!council.students.length) {
+    throw new Error("Aucun élève trouvé dans cette classe.");
+  }
+
+  // Find the specific student
+  const student = council.students.find((s) => s.id === studentId);
+
+  if (!student) {
+    throw new Error(
+      `Élève avec l'ID ${studentId} introuvable dans cette classe.`
+    );
+  }
+
+  // Build the update payload
+  const payload: TeacherClassCouncilStudentUpdatePayload = {
+    student: {
+      ...student,
+      appreciationPrincipalTeacher: {
+        ...student.appreciationPrincipalTeacher,
+        text: appreciationText.trim(),
+        date: new Date()
+      }
+    },
+    classAppreciation: council.classAppreciation
+      ? {
+          ...council.classAppreciation,
+          date: new Date()
+        }
+      : undefined
+  };
+
+  // Update the student's appreciation
+  const result = await updateTeacherClassCouncilStudent(
+    session,
+    account.id,
+    classId,
+    periodCode,
+    payload
+  );
+
+  return {
+    success: true,
+    result
+  };
 }
