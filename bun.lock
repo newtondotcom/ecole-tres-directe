@@ -16,7 +16,7 @@
         "lucide-react": "^0.554.0",
         "motion": "^12.23.24",
         "next": "16.0.3",
-        "pawdirecte-teacher": "^2.1.1",
+        "pawdirecte-teacher": "^2.1.2",
         "react": "19.2.0",
         "react-dom": "19.2.0",
         "tailwind-merge": "^3.4.0",
@@ -778,7 +778,7 @@
 
     "path-parse": ["path-parse@1.0.7", "", {}, "sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw=="],
 
-    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.1", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.7" } }, "sha512-guXpbTgkp/oeTM2uaYVQ2kZrCO/0sNr01wWbxFe/PeFtRYLslMgNNY0T+Jbo7tBCeMlLmutOg59tqtseN5tYJQ=="],
+    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.2", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.7" } }, "sha512-NBkQ/ElsNO4DW1AvmfuOyPQaiqwNh/HkKqNBz243eeMSDMZOi0/F3MsqN736sVyngtPrBlDji58IC7WVyQ66jg=="],
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
