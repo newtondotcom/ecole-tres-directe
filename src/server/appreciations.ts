@@ -55,7 +55,7 @@ export async function fetchAppreciationsData(
   };
 }
 
-async function findFirstPrincipalClass(
+export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number
 ): Promise<PrincipalClassSummary> {
@@ -83,7 +83,7 @@ async function findFirstPrincipalClass(
   );
 }
 
-async function buildStudentRecap(
+export async function buildStudentRecap(
   session: Session,
   student: TeacherClassCouncilStudent
 ): Promise<StudentRecap> {

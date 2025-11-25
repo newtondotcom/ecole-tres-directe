@@ -25,6 +25,7 @@ type AppreciationsStoreState = {
   classSummary?: PrincipalClassSummary;
   students?: StudentSummary[];
   firstStudentRecap?: StudentRecap;
+  credentials?: Credentials;
 };
 
 type AppreciationsStoreActions = {
@@ -36,7 +37,8 @@ export type AppreciationsStore = AppreciationsStoreState & AppreciationsStoreAct
 
 const initialState: AppreciationsStoreState = {
   step: "idle",
-  isLoading: false
+  isLoading: false,
+  credentials: undefined
 };
 
 export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
@@ -60,7 +62,8 @@ export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
       });
       set({
         firstStudentRecap: result.firstStudentRecap,
-        step: "grades_fetch"
+        step: "grades_fetch",
+        credentials: { username, password }
       });
       set({
         step: "ready",

@@ -36,3 +36,9 @@ export type AppreciationsServerResult = {
   firstStudentRecap: StudentRecap;
 };
 
+export type GeneratedAppreciation = {
+  studentId: number;
+  studentName: string;
+  appreciation: string;
+};
+

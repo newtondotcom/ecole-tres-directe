@@ -1,6 +1,17 @@
 "use server";
 
-import type { SubjectAppreciation } from "@/types/appreciations";
+import { teacherClassCouncil } from "pawdirecte-teacher";
+
+import { loginUsingCredentials } from "@/lib/pawdirecte";
+import {
+  buildStudentRecap,
+  findFirstPrincipalClass
+} from "@/server/appreciations";
+import type {
+  Credentials,
+  GeneratedAppreciation,
+  SubjectAppreciation
+} from "@/types/appreciations";
 
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 
@@ -105,11 +116,70 @@ Inspires toi des appréciations suivantes pour le style :
 Un trimestre avec des résultats hétérogènes pour Adam. Vous produisez un travail sérieux manquant de régularité dans certaines disciplines. Vous avez montré une belle implication en classe soulignée par plusieurs professeurs, il faut maintenant l'étendre à toutes les disciplines. Allez Adam !
 Un deuxième trimestre dans la continuité du premier au niveau des résultats. La participation est active et Louis est davantage impliqué en classe. Cependant, des efforts sont toujours attendus quant à votre concentration et attitude qui se montrent trop fluctuantes. Le travail personnel est sérieux, mais se doit de gagner en rigueur afin de progresser.
 Un deuxième trimestre avec des résultats satisfaisants. La participation de Gabriel en classe est appréciée, mais est, dans certaines disciplines, effacée par un comportement qui n'est pas toujours au travail. Le travail fourni est satisfaisant. Pour autant, nous sommes convaincus que vous avez encore la capacité de progresser en approfondissant le travail personnel.
+Manon est une élève très investie, qui travaille avec l'envie de bien faire. Elle rencontre des difficultés dans certaines matières, notamment dans la restitution des connaissances. Un approfondissement des leçons semble indispensable pour lui permettre de progresser et consolider durablement ses acquis. Nous l'encourageons à croire davantage en ses capacités. L'erreur n'est pas un échec.
+Excellents résultats pour ce premier trimestre. Gaspard s'implique avec sérieux et rigueur dans son travail. Nous l'encourageons à continuer sur cette voie, et à s'exprimer davantage à l'oral au second trimestre.
+Un excellent trimestre qui clôture une année de cinquième réussie ! Bravo, Mathis, pour votre travail et votre investissement en classe. Poursuivez ainsi !
+Adam a des capacités de travail qu'il pourrait mieux exploiter par une plus grande concentration en cours et une rigueur plus soutenue à l'écrit. Nous attendons des efforts en ce sens au prochain trimestre.
+Bravo pour cet excellent trimestre, Héloïse. Vos capacités sont parfaitement mises en valeur par un travail sérieux et un investissement régulier en classe. Félicitations ! Poursuivez ainsi !
+Un ensemble irrégulier malgré de belles réussites. Si dans certaines matières les professeurs louent votre travail et votre investissement, dans d'autres disciplines vos enseignants vous demandent de refaire les exercices, revoir les cours et vous montrer bien concentré. Suivez bien ces conseils pour progresser Maximilien c'est indispensable pour la prochaine période
+Très bons résultats. Kenzo est un élève vif et pertinent mais il doit apprendre à canaliser ses prises de parole: cela sera bénéfique pour lui comme pour ses camarades. Nous comptons sur ses efforts.
+Ensemble tout à fait satisfaisant. Carla travaille avec sérieux mais peut encore progresser en généralisant les efforts de participation à toutes les matières. Nous comptons sur elle pour tenir compte de ces conseils.
+Un premier trimestre encourageant.La maîtrise des connaissances et des compétences est très satisfaisante. Lucas doit montrer son implication en restant concentré. Nous l'encourageons dans cette voie.
+Très bonne entrée en classe de 6ème pour Ombline. Le niveau d'ensemble témoigne d'un investissement sérieux et réfléchi. Nous vous invitons à tenir compte des remarques de vos professeurs qui vous conseillent de participer davantage à l'oral. Vos connaissances sont solides, osez donc les partager avec l'ensemble de la classe pour continuer à gagner en confiance.
+Un beau premier trimestre.La maîtrise des connaissances et des compétences est très satisfaisante. Martin s'investit avec sérieux et doit poursuivre ainsi tout en s'affirmant plus régulièrement à l'oral.
 
 Rédige l'appréciation conforme aux contraintes.`;
 }
 
 function sanitizeAppreciation(raw: string) {
   return raw.replace(/\*\*/g, "").trim();
+}
+
+type GenerateBatchParams = {
+  credentials: Credentials;
+  prompt: string;
+  limit?: number;
+};
+
+export async function generateBatchAppreciations({
+  credentials,
+  prompt,
+  limit = 30
+}: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
+  const { session, account } = await loginUsingCredentials(
+    credentials.username,
+    credentials.password
+  );
+
+  const classSummary = await findFirstPrincipalClass(session, account.id);
+  const council = await teacherClassCouncil(
+    session,
+    account.id,
+    classSummary.classId,
+    classSummary.periodCode
+  );
+
+  if (!council.students.length) {
+    throw new Error("Aucun élève trouvé pour cette classe.");
+  }
+
+  const selectedStudents = council.students.slice(0, limit);
+  const results: GeneratedAppreciation[] = [];
+
+  for (const student of selectedStudents) {
+    const recap = await buildStudentRecap(session, student);
+    const appreciation = await generateGeneralAppreciation({
+      prompt,
+      subjects: recap.subjects
+    });
+
+    results.push({
+      studentId: recap.studentId,
+      studentName: recap.studentName,
+      appreciation
+    });
+  }
+
+  return results;
 }
 

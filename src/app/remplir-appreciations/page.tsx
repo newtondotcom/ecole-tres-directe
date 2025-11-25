@@ -20,7 +20,22 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { generateGeneralAppreciation } from "@/server/generate-appreciation";
+import {
+  generateBatchAppreciations,
+  generateGeneralAppreciation
+} from "@/server/generate-appreciation";
+import type { GeneratedAppreciation } from "@/types/appreciations";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",
@@ -49,7 +64,8 @@ export default function RemplirAppreciations() {
     firstStudentRecap,
     students,
     authenticate,
-    reset
+    reset,
+    credentials
   } = useAppreciationsStore();
 
   const [username, setUsername] = useState("");
@@ -58,6 +74,9 @@ export default function RemplirAppreciations() {
   const [generatedAppreciation, setGeneratedAppreciation] = useState("");
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [isGenerating, startGeneration] = useTransition();
+  const [batchResults, setBatchResults] = useState<GeneratedAppreciation[] | null>(null);
+  const [batchError, setBatchError] = useState<string | null>(null);
+  const [isBatching, startBatchGeneration] = useTransition();
   const hasRecap = Boolean(firstStudentRecap);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -268,7 +287,7 @@ export default function RemplirAppreciations() {
                         </div>
                       </ScrollArea>
                     </CardContent>
-                    <CardFooter className="justify-end">
+                    <CardFooter className="flex flex-wrap items-center justify-end gap-3">
                       <Button
                         type="button"
                         disabled={isGenerating}
@@ -298,6 +317,70 @@ export default function RemplirAppreciations() {
                           ? "Génération en cours..."
                           : "Voir l'appréciation générale générée"}
                       </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={isBatching}
+                          >
+                            {isBatching
+                              ? "Génération des 30 élèves..."
+                              : "Générer pour 30 élèves"}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Confirmer la génération en lot
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Cette action va relancer toutes les requêtes pour
+                              récupérer les élèves et générer une appréciation
+                              pour chacun (jusqu&apos;à 30). Cela peut prendre
+                              quelques minutes et consommer des crédits API
+                              supplémentaires. Voulez-vous continuer ?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction asChild>
+                              <Button
+                                type="button"
+                                disabled={isBatching}
+                                onClick={() => {
+                                  if (!credentials) {
+                                    setBatchError(
+                                      "Veuillez vous reconnecter pour lancer la génération de lot."
+                                    );
+                                    return;
+                                  }
+                                  startBatchGeneration(async () => {
+                                    try {
+                                      const results =
+                                        await generateBatchAppreciations({
+                                          credentials,
+                                          prompt: promptInstruction,
+                                          limit: 30
+                                        });
+                                      setBatchResults(results);
+                                      setBatchError(null);
+                                    } catch (error) {
+                                      const message =
+                                        error instanceof Error
+                                          ? error.message
+                                          : "Impossible de générer le lot d'appréciations.";
+                                      setBatchError(message);
+                                    }
+                                  });
+                                }}
+                              >
+                                Confirmer
+                              </Button>
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </CardFooter>
                     {generationError && (
                       <CardFooter>
@@ -315,6 +398,36 @@ export default function RemplirAppreciations() {
                           value={generatedAppreciation}
                           className="min-h-32"
                         />
+                      </CardContent>
+                    )}
+                    {batchError && (
+                      <CardFooter>
+                        <p className="text-sm text-red-600">{batchError}</p>
+                      </CardFooter>
+                    )}
+                    {batchResults && batchResults.length > 0 && (
+                      <CardContent>
+                        <Label className="mb-2 block">
+                          Appréciations générées pour 30 élèves
+                        </Label>
+                        <ScrollArea className="max-h-[22rem] rounded-md border border-neutral-100">
+                          <div className="space-y-3 p-3 pr-4">
+                            {batchResults.map((result) => (
+                              <Card key={result.studentId}>
+                                <CardHeader className="p-4 pb-2">
+                                  <CardTitle className="text-base">
+                                    {result.studentName}
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-4 pt-0">
+                                  <p className="text-sm text-neutral-700">
+                                    {result.appreciation}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        </ScrollArea>
                       </CardContent>
                     )}
                   </Card>
