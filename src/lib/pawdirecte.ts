@@ -4,7 +4,7 @@ export const uuid = "your-device-uuid";
 
 async function setupGtkToken() {
   await new Promise<void>((resolve, reject) => {
-      const handleMessage = (event) => {
+      const handleMessage = (event: { data: { type: string; payload: any; }; }) => {
           if (event.data && event.data.type === "EDPU_MESSAGE") {
               window.removeEventListener("message", handleMessage);
               const message = event.data.payload;
