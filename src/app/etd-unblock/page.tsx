@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,60 +12,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const browserLogosInfos: Record<
-  string,
-  {
-    logo: React.ReactNode;
-    available: boolean;
-    url?: string;
-  }
-> = {
-  Firefox: {
-    logo: <span className="text-2xl">🦊</span>,
-    available: true,
-    url: undefined,
-  },
-  Chrome: {
-    logo: <span className="text-2xl">🌐</span>,
-    available: true,
-    url: "https://chromewebstore.google.com/detail/ecole-directe-plus-unbloc/jglboadggdgnaicfaejjgmnfhfdnflkb?hl=fr",
-  },
-  Opera: {
-    logo: <span className="text-2xl">🌐</span>,
-    available: true,
-    url: "https://chromewebstore.google.com/detail/ecole-directe-plus-unbloc/jglboadggdgnaicfaejjgmnfhfdnflkb?hl=fr",
-  },
-  Edge: {
-    logo: <span className="text-2xl">🌐</span>,
-    available: true,
-    url: "https://microsoftedge.microsoft.com/addons/detail/ecole-directe-plus-unbloc/bghggiemmicjhglgnilchjfnlbcmehgg",
-  },
-  Chromium: {
-    logo: <span className="text-2xl">🌐</span>,
-    available: true,
-    url: "https://chromewebstore.google.com/detail/ecole-directe-plus-unbloc/jglboadggdgnaicfaejjgmnfhfdnflkb?hl=fr",
-  },
-  Safari: {
-    logo: <span className="text-2xl">🥹</span>,
-    available: false,
-    url: "",
-  },
-};
+const FIREFOX_STORE_URL =
+  "https://www.firefox.com/fr/";
 
-async function getFirefoxUrl() {
-  try {
-    const response = await fetch(
-      "https://unblock.ecole-directe.plus/update.json"
-    );
-    const data = await response.json();
-    const updates =
-      data.addons["{edpu-firefox-self-host@ecole-directe.plus}"].updates;
-    return updates[updates.length - 1].update_link;
-  } catch (error) {
-    console.error("Failed to fetch Firefox URL:", error);
-    return undefined;
+  async function getFirefoxUrl() {
+    try {
+      const response = await fetch(
+        "https://raw.githubusercontent.com/newtondotcom/Ecole-Tres-Directe-Unblock/refs/heads/main/updates.json"
+      );
+      const data = await response.json();
+      const updates =
+        data.addons["{etdu-firefox-self-host@ecole-tres-directe.vercel.app}"].updates;
+      return updates[updates.length - 1].update_link;
+    } catch (error) {
+      console.error("Failed to fetch Firefox URL:", error);
+      return undefined;
+    }
   }
-}
 
 function getBrowser(): string {
   if (typeof window === "undefined") return "Unknown";
@@ -98,9 +62,7 @@ export default function EtdUnblock({
 }) {
   const [userBrowser, setUserBrowser] = useState<string>("Unknown");
   const [userOS, setUserOS] = useState<string>("Unknown");
-  const [url, setUrl] = useState<string | undefined>(
-    browserLogosInfos?.[userBrowser]?.url
-  );
+  const [url, setUrl] = useState<string | undefined>(FIREFOX_STORE_URL);
   const aboutRef = useRef<HTMLDivElement>(null);
   const aboutButtonRef = useRef<HTMLAnchorElement>(null);
   const heroBannerRef = useRef<HTMLElement>(null);
@@ -110,31 +72,10 @@ export default function EtdUnblock({
     const os = getOS();
     setUserBrowser(browser);
     setUserOS(os);
-    setUrl(browserLogosInfos?.[browser]?.url);
+    setUrl(FIREFOX_STORE_URL);
   }, []);
 
-  const nonCompatibleIOSBrowsers = [
-    "Safari",
-    "Chromium",
-    "Chrome",
-    "Edge",
-    "Opera",
-    "Firefox",
-  ];
-  const nonCompatibleAndroidBrowsers = [
-    "Safari",
-    "Chromium",
-    "Chrome",
-    "Edge",
-    "Opera",
-  ];
-
-  const compatibilityCondition =
-    (userOS === "iOS" &&
-      nonCompatibleIOSBrowsers.includes(userBrowser)) ||
-    (userOS === "Android" &&
-      nonCompatibleAndroidBrowsers.includes(userBrowser)) ||
-    (userOS === "MacOS" && userBrowser === "Safari");
+  const compatibilityCondition = userBrowser !== "Firefox";
 
   function scrollToAbout() {
     if (typeof window !== "undefined" && window.location.hash === "#about") {
@@ -208,12 +149,16 @@ export default function EtdUnblock({
   useEffect(() => {
     if (userBrowser === "Firefox") {
       getFirefoxUrl().then((firefoxUrl) => {
-        if (firefoxUrl) setUrl(firefoxUrl);
+        if (firefoxUrl) {
+          setUrl(firefoxUrl);
+        } else {
+          setUrl(FIREFOX_STORE_URL);
+        }
       });
+    } else {
+      setUrl(FIREFOX_STORE_URL);
     }
   }, [userBrowser]);
-
-  const browserInfo = browserLogosInfos[userBrowser];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
@@ -231,6 +176,7 @@ export default function EtdUnblock({
       </div>
 
       {/* Social links */}
+      {/*
       <div className="absolute top-6 right-6 z-10 flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
           <a
@@ -253,7 +199,8 @@ export default function EtdUnblock({
           </a>
         </Button>
       </div>
-
+      */}
+      
       {/* Help link */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
         <Button variant="link" asChild>
@@ -269,7 +216,15 @@ export default function EtdUnblock({
           <Card className="border-2 shadow-lg">
             <CardHeader className="text-center space-y-4 pb-6">
               <div className="flex justify-center">
-                <div className="text-6xl">📚</div>
+                <div className="relative h-20 w-20">
+                  <Image
+                    src="/firefox.svg"
+                    alt="Firefox"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-3xl md:text-4xl">
@@ -286,7 +241,10 @@ export default function EtdUnblock({
                 <span className="font-bold text-foreground">
                   fonctionner correctement
                 </span>{" "}
-                et accéder à l&apos;API d&apos;EcoleDirecte.
+                et accéder à l&apos;API d&apos;EcoleDirecte. Pour des raisons de
+                vie privée et de choix techniques, nous ne supportons{" "}
+                <span className="font-semibold">que Firefox</span> (et les
+                navigateurs strictement basés sur son moteur).
               </p>
 
               {compatibilityCondition &&
@@ -294,12 +252,10 @@ export default function EtdUnblock({
                   <Card className="border-destructive bg-destructive/10">
                     <CardContent className="pt-6">
                       <p className="text-destructive">
-                        Malheureusement, l&apos;extension Ecole Directe Plus Unblock
-                        n&apos;est pas compatible avec les navigateurs sur iOS et
-                        iPadOS. S&apos;il vous plaît, considérez l&apos;usage
-                        d&apos;un autre appareil avec un système d&apos;exploitation
-                        compatible comme un ordinateur sous Windows ou Linux, ou un
-                        appareil mobile sous Android.
+                        ETD Unblock ne peut pas fonctionner sur les navigateurs
+                        iOS/iPadOS en raison des restrictions imposées par Apple.
+                        Merci d&apos;utiliser un ordinateur ou un appareil Android
+                        avec Firefox.
                       </p>
                     </CardContent>
                   </Card>
@@ -307,14 +263,15 @@ export default function EtdUnblock({
                   <Card className="border-destructive bg-destructive/10">
                     <CardContent className="pt-6 space-y-2">
                       <p className="text-destructive">
-                        Malheureusement, l&apos;extension Ecole Directe Plus Unblock
-                        n&apos;est pas disponible sur votre navigateur. 😥
+                        Votre navigateur actuel n&apos;est pas supporté.
+                        Microsoft et Google restreignent l&apos;usage
+                        d&apos;extensions comme ETD Unblock sur les navigateurs
+                        Chromium (Chrome, Edge, Opera, Brave, etc.).
                       </p>
                       <p className="text-destructive">
-                        S&apos;il vous plaît considérez l&apos;usage d&apos;un
-                        navigateur compatible comme le{" "}
+                        Merci d&apos;installer un{" "}
                         <a
-                          href="https://play.google.com/store/apps/details?id=org.mozilla.firefox"
+                          href={FIREFOX_STORE_URL}
                           className="font-semibold underline hover:no-underline"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -343,11 +300,18 @@ export default function EtdUnblock({
                 >
                   <a
                     href={url}
-                    target={userBrowser === "Firefox" ? "_self" : "_blank"}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex flex-col items-center gap-3"
                   >
-                    <div className="text-4xl">{browserInfo?.logo}</div>
+                    <div className="relative h-14 w-14">
+                      <Image
+                        src="/firefox.svg"
+                        alt="Firefox"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                     <div className="flex flex-col items-center gap-1">
                       {isEtdUnblockActuallyInstalled ? (
                         <>
@@ -368,7 +332,6 @@ export default function EtdUnblock({
                           <span className="font-semibold">
                             Ajouter l&apos;extension
                           </span>
-                          <span className="text-2xl">⬇</span>
                         </>
                       )}
                     </div>
@@ -460,7 +423,7 @@ export default function EtdUnblock({
               <p className="text-muted-foreground leading-relaxed">
                 ETD Unblock est exclusivement active sur les domaines{" "}
                 <code className="px-2 py-1 bg-muted rounded text-sm font-mono">
-                  ecole-directe.plus
+                  ecole-tres-directe.vercel.app
                 </code>{" "}
                 ainsi que{" "}
                 <code className="px-2 py-1 bg-muted rounded text-sm font-mono">
