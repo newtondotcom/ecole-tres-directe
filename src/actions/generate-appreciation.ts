@@ -25,11 +25,15 @@ const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 type GenerateAppreciationParams = {
   prompt: string;
   subjects: SubjectAppreciation[];
+  studentFirstName: string;
+  studentGender: "M" | "F";
 };
 
 export async function generateGeneralAppreciation({
   prompt,
-  subjects
+  subjects,
+  studentFirstName,
+  studentGender
 }: GenerateAppreciationParams) {
   const apiKey = process.env.MISTRAL_API_KEY;
 
@@ -45,6 +49,17 @@ export async function generateGeneralAppreciation({
     );
   }
 
+  const placeholderName = studentGender === "F" ? "Marie" : "Pierre";
+  const nameTransformer = createNameTransformer(
+    studentFirstName,
+    placeholderName
+  );
+  const sanitizedPrompt = nameTransformer.anonymize(prompt ?? "");
+  const sanitizedSubjects = subjects.map((subject) => ({
+    ...subject,
+    appreciation: nameTransformer.anonymize(subject.appreciation)
+  }));
+
   const messages = [
     {
       role: "system",
@@ -53,7 +68,7 @@ export async function generateGeneralAppreciation({
     },
     {
       role: "user",
-      content: buildUserPrompt(prompt, subjects)
+      content: buildUserPrompt(sanitizedPrompt, sanitizedSubjects)
     }
   ];
 
@@ -87,7 +102,7 @@ export async function generateGeneralAppreciation({
     );
   }
 
-  return sanitizeAppreciation(content);
+  return nameTransformer.deanonymize(sanitizeAppreciation(content));
 }
 
 function buildUserPrompt(prompt: string, subjects: SubjectAppreciation[]) {
@@ -142,6 +157,80 @@ function sanitizeAppreciation(raw: string) {
   return raw.replace(/\*\*/g, "").trim();
 }
 
+type NameTransformer = {
+  anonymize: (value: string) => string;
+  deanonymize: (value: string) => string;
+};
+
+function createNameTransformer(
+  studentFirstName: string,
+  placeholderName: string
+): NameTransformer {
+  const trimmedStudentName = studentFirstName.trim();
+
+  if (!trimmedStudentName) {
+    return {
+      anonymize: (value: string) => value,
+      deanonymize: (value: string) => value
+    };
+  }
+
+  const studentPattern = new RegExp(escapeRegExp(trimmedStudentName), "gi");
+  const placeholderPattern = new RegExp(escapeRegExp(placeholderName), "gi");
+
+  return {
+    anonymize: (value: string) =>
+      replaceWithMatchedCase(value, studentPattern, placeholderName),
+    deanonymize: (value: string) =>
+      replaceWithMatchedCase(value, placeholderPattern, trimmedStudentName)
+  };
+}
+
+function replaceWithMatchedCase(
+  value: string,
+  pattern: RegExp,
+  replacement: string
+) {
+  if (!value) {
+    return value;
+  }
+
+  pattern.lastIndex = 0;
+  return value.replace(pattern, (match) =>
+    applyCasePattern(match, replacement)
+  );
+}
+
+function applyCasePattern(source: string, target: string) {
+  if (!source) {
+    return target;
+  }
+
+  const isUpperCase = source === source.toUpperCase();
+  const isLowerCase = source === source.toLowerCase();
+  const isCapitalized =
+    source[0] === source[0].toUpperCase() &&
+    source.slice(1) === source.slice(1).toLowerCase();
+
+  if (isUpperCase) {
+    return target.toUpperCase();
+  }
+
+  if (isLowerCase) {
+    return target.toLowerCase();
+  }
+
+  if (isCapitalized) {
+    return target.charAt(0).toUpperCase() + target.slice(1).toLowerCase();
+  }
+
+  return target;
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 type GenerateBatchParams = {
   credentials: Credentials;
   prompt: string;
@@ -177,7 +266,9 @@ export async function generateBatchAppreciations({
     const recap = await buildStudentRecap(session, student);
     const appreciation = await generateGeneralAppreciation({
       prompt,
-      subjects: recap.subjects
+      subjects: recap.subjects,
+      studentFirstName: student.firstName,
+      studentGender: student.gender
     });
 
     await uploadGeneratedAppreciation({

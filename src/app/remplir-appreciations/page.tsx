@@ -302,7 +302,9 @@ export default function RemplirAppreciations() {
                               const appreciation = await generateGeneralAppreciation(
                                 {
                                   prompt: promptInstruction,
-                                  subjects: firstStudentRecap.subjects
+                                  subjects: firstStudentRecap.subjects,
+                                  studentFirstName: firstStudentRecap.studentFirstName,
+                                  studentGender: firstStudentRecap.studentGender
                                 }
                               );
                               setGeneratedAppreciation(appreciation);

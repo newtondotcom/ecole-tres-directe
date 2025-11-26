@@ -104,6 +104,8 @@ export async function buildStudentRecap(
   return {
     studentId: student.id,
     studentName: `${student.firstName} ${student.lastName}`.trim(),
+    studentFirstName: student.firstName,
+    studentGender: student.gender,
     periodName,
     subjects: formattedSubjects
   };
