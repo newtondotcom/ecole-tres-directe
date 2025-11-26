@@ -300,7 +300,7 @@ export default function EtdUnblock({
                 >
                   <a
                     href={url}
-                    target="_blank"
+                    target={userBrowser === "Firefox" ? "_self" : "_blank"}
                     rel="noopener noreferrer"
                     className="flex flex-col items-center gap-3"
                   >
