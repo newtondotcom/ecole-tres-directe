@@ -221,7 +221,7 @@ export default function LoginPage() {
                     <FieldLabel htmlFor="username">Identifiant</FieldLabel>
                     <Input
                       id="username"
-                      placeholder="professeur@ecole.fr"
+                      placeholder="DupontA"
                       value={username}
                       onChange={(event) => setUsername(event.target.value)}
                       disabled={isSubmitting}
