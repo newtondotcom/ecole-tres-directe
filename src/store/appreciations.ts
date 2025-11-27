@@ -1,6 +1,8 @@
 "use client";
 
 import { create } from "zustand";
+import type { Session, Account } from "pawdirecte-teacher";
+
 import type {
   PrincipalClassSummary,
   StudentRecap,
@@ -8,6 +10,7 @@ import type {
   Credentials
 } from "@/types/appreciations";
 import { fetchAppreciationsData } from "@/actions/appreciations";
+import { useAuthStore } from "@/store/auth";
 
 export type Step =
   | "idle"
@@ -18,7 +21,7 @@ export type Step =
   | "ready"
   | "error";
 
-type AppreciationsStoreState = {
+ type AppreciationsStoreState = {
   step: Step;
   isLoading: boolean;
   error?: string;
@@ -26,10 +29,12 @@ type AppreciationsStoreState = {
   students?: StudentSummary[];
   firstStudentRecap?: StudentRecap;
   credentials?: Credentials;
+  session?: Session;
+  account?: Account;
 };
 
-type AppreciationsStoreActions = {
-  authenticate: (credentials: Credentials) => Promise<void>;
+ type AppreciationsStoreActions = {
+  getAppreciationsData: () => Promise<void>;
   reset: () => void;
 };
 
@@ -38,12 +43,18 @@ export type AppreciationsStore = AppreciationsStoreState & AppreciationsStoreAct
 const initialState: AppreciationsStoreState = {
   step: "idle",
   isLoading: false,
-  credentials: undefined
+  error: undefined,
+  classSummary: undefined,
+  students: undefined,
+  firstStudentRecap: undefined,
+  credentials: undefined,
+  session: undefined,
+  account: undefined
 };
 
 export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
   ...initialState,
-  authenticate: async ({ username, password }) => {
+  getAppreciationsData: async () => {
     set({
       ...initialState,
       step: "authenticating",
@@ -51,7 +62,23 @@ export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
     });
 
     try {
-      const result = await fetchAppreciationsData({ username, password });
+      const authStore = useAuthStore.getState();
+
+      if (
+        !authStore.session ||
+        !authStore.account ||
+        !authStore.credentials
+      ) {
+        throw new Error(
+          "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+        );
+      }
+
+      const result = await fetchAppreciationsData({
+        session: authStore.session,
+        account: authStore.account
+      });
+
       set({
         classSummary: result.classSummary,
         step: "class_lookup"
@@ -63,11 +90,14 @@ export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
       set({
         firstStudentRecap: result.firstStudentRecap,
         step: "grades_fetch",
-        credentials: { username, password }
+        credentials: authStore.credentials,
+        session: authStore.session,
+        account: authStore.account
       });
       set({
         step: "ready",
-        isLoading: false
+        isLoading: false,
+        error: undefined
       });
     } catch (error) {
       const message =
@@ -77,14 +107,12 @@ export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
       set({
         ...initialState,
         step: "error",
-        error: message
+        error: message,
+        isLoading: false
       });
-    } finally {
-      if (get().step !== "ready" && get().step !== "error") {
-        set({ isLoading: false });
-      }
-    }
+    } 
   },
-  reset: () => set(initialState)
+  reset: () => {
+    set(initialState);
+  }
 }));
-

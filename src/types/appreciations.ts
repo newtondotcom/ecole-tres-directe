@@ -1,3 +1,5 @@
+import type { Account, Session } from "pawdirecte-teacher";
+
 export type Credentials = {
   username: string;
   password: string;
@@ -36,6 +38,8 @@ export type AppreciationsServerResult = {
   classSummary: PrincipalClassSummary;
   students: StudentSummary[];
   firstStudentRecap: StudentRecap;
+  session: Session;
+  account: Account;
 };
 
 export type GeneratedAppreciation = {

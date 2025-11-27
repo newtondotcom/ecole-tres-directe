@@ -1,14 +1,15 @@
 "use client";
 
-import { type FormEvent, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 
 import {
   type Step,
   useAppreciationsStore
-} from "../../store/appreciations";
+} from "@/store/appreciations";
+import { useAuthStore } from "@/store/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -64,13 +65,12 @@ export default function RemplirAppreciations() {
     classSummary,
     firstStudentRecap,
     students,
-    authenticate,
+    getAppreciationsData,
     reset,
     credentials
   } = useAppreciationsStore();
+  const authStore = useAuthStore();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [promptInstruction, setPromptInstruction] = useState("");
   const [generatedAppreciation, setGeneratedAppreciation] = useState("");
   const [generationError, setGenerationError] = useState<string | null>(null);
@@ -82,21 +82,15 @@ export default function RemplirAppreciations() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const hasRecap = Boolean(firstStudentRecap);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    await authenticate({ username, password });
-  };
-
-  const disableSubmit = !username || !password || isLoading;
+  const isAuthenticated = authStore.isAuthenticated;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold">Remplir les appréciations</h1>
         <p className="mt-2 text-sm text-neutral-500">
-          Connectez-vous pour récupérer votre classe principale et afficher le
-          premier récapitulatif d&apos;appréciations.
+          Après vous être connecté depuis la page dédiée, récupérez votre classe
+          principale et générez vos appréciations en quelques clics.
         </p>
       </header>
 
@@ -110,64 +104,62 @@ export default function RemplirAppreciations() {
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Connexion professeur</CardTitle>
+                  <CardTitle>Récupération des données</CardTitle>
                   <CardDescription>
-                    Identifiez-vous pour récupérer vos données de classe.
+                    Lancez la synchronisation de vos classes et de vos élèves.
+                    L’authentification se fait depuis la page de connexion.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <form className="space-y-4" onSubmit={handleSubmit}>
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Nom d&apos;utilisateur</Label>
-                      <Input
-                        id="username"
-                        name="username"
-                        type="text"
-                        required
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                        placeholder="professeur@ecole.fr"
-                        disabled={isLoading}
-                      />
+                <CardContent className="space-y-4">
+                  {isAuthenticated ? (
+                    <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
+                      Connecté en tant que{" "}
+                      <span className="font-semibold">
+                        {authStore.account?.firstName}{" "}
+                        {authStore.account?.lastName}
+                      </span>
+                      .
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Mot de passe</Label>
-                      <Input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        placeholder="••••••••"
-                        disabled={isLoading}
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-2">
-                      <Button type="submit" disabled={disableSubmit}>
-                        {isLoading ? "Connexion..." : "Se connecter"}
-                      </Button>
-                      {(step === "ready" || step === "error") && (
-                        <Button
-                          type="button"
-                          variant="link"
-                          onClick={reset}
-                          className="px-0"
-                        >
-                          Réinitialiser
-                        </Button>
-                      )}
-                    </div>
-
-                    {error && (
-                      <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                        {error}
+                  ) : (
+                    <div className="space-y-3 rounded-md border border-dashed border-amber-400 bg-amber-50 px-3 py-3 text-sm text-amber-700">
+                      <p>
+                        Aucune session active. Veuillez vous authentifier via la{" "}
+                        <Link className="underline" href="/login">
+                          page de connexion
+                        </Link>{" "}
+                        avant de lancer la récupération.
                       </p>
-                    )}
-                  </form>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href="/login">Aller à la page de connexion</Link>
+                      </Button>
+                    </div>
+                  )}
+                  {error && (
+                    <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                      {error}
+                    </p>
+                  )}
                 </CardContent>
+                <CardFooter className="flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    onClick={getAppreciationsData}
+                    disabled={!isAuthenticated || isLoading}
+                    className="flex-1"
+                  >
+                    {isLoading ? "Chargement…" : "Charger ma classe"}
+                  </Button>
+                  {(step === "ready" || step === "error") && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={reset}
+                      className="flex-1"
+                      disabled={isLoading}
+                    >
+                      Réinitialiser
+                    </Button>
+                  )}
+                </CardFooter>
               </Card>
 
               <Card>

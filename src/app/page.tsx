@@ -65,6 +65,20 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Connexion</CardTitle>
+              <CardDescription>
+                Connectez-vous à Ecole Tres Directe
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full" variant="outline">
+                <Link href="/login">Connexion</Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

@@ -5,28 +5,28 @@ import {
   teacherGrades,
   teacherLevelsList,
   type Session,
+  type Account,
   type TeacherClassCouncilStudent,
   type TeacherGradesResponse
 } from "pawdirecte-teacher";
 
-import { loginUsingCredentials } from "@/lib/pawdirecte";
 import type {
   AppreciationsServerResult,
-  Credentials,
   PrincipalClassSummary,
   StudentRecap,
   SubjectAppreciation,
   StudentSummary
 } from "@/types/appreciations";
 
-export async function fetchAppreciationsData(
-  credentials: Credentials
-): Promise<AppreciationsServerResult> {
-  const { session, account } = await loginUsingCredentials(
-    credentials.username,
-    credentials.password
-  );
+type FetchAppreciationsParams = {
+  session: Session;
+  account: Account;
+};
 
+export async function fetchAppreciationsData({
+  session,
+  account
+}: FetchAppreciationsParams): Promise<AppreciationsServerResult> {
   const classSummary = await findFirstPrincipalClass(session, account.id);
 
   const council = await teacherClassCouncil(
@@ -51,7 +51,9 @@ export async function fetchAppreciationsData(
   return {
     classSummary,
     students,
-    firstStudentRecap
+    firstStudentRecap,
+    session,
+    account
   };
 }
 
