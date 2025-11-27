@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,12 +11,14 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
 import { useUnblockStatus } from "@/hooks/use-unblock-status";
+import { Background } from "@/components/ui/background-components";
 
 const apiVersion = process.env.NEXT_PUBLIC_ECOLE_DIRECTE_API_VERSION ?? "7.0.1";
 
 export default function LoginPage() {
   const { authenticate } = useAuthStore();
   const extensionDetected = useUnblockStatus();
+  const router = useRouter();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -88,6 +91,7 @@ export default function LoginPage() {
       setStatus("Authentification en cours…");
       await authenticate({ username, password });
       setStatus("Authentifié avec succès !");
+      router.push("/dashboard");
     } catch (err) {
       const message =
         err instanceof Error
@@ -189,6 +193,9 @@ export default function LoginPage() {
           .
         </FieldDescription>
       </div>
+
+
+    <Background />
     </div>
   );
 }
