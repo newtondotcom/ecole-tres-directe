@@ -1,4 +1,7 @@
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <main className="container mx-auto px-4 py-20 max-w-4xl">
@@ -10,6 +13,11 @@ export default function Home() {
             Outils pour améliorer votre expérience avec EcoleDirecte
           </p>
         </div>
+        <button onClick={() => {
+          router.push("/login");
+        }}>
+          Connexion
+        </button>
       </main>
     </div>
   );
