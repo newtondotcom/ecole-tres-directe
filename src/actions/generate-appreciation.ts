@@ -24,12 +24,14 @@ import { generateGeneralAppreciation } from "@/actions/mistral";
 type GenerateBatchParams = {
   credentials: Credentials;
   prompt: string;
+  userAppreciations?: string;
   limit?: number;
 };
 
 export async function generateBatchAppreciations({
   credentials,
   prompt,
+  userAppreciations,
   limit = 30
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
   const { session, account } = await loginUsingCredentials(
@@ -58,7 +60,8 @@ export async function generateBatchAppreciations({
       prompt,
       subjects: recap.subjects,
       studentFirstName: student.firstName,
-      studentGender: student.gender
+      studentGender: student.gender,
+      userAppreciations: userAppreciations || undefined
     });
 
     await uploadGeneratedAppreciation({

@@ -26,7 +26,7 @@ import {
 } from "@/actions/generate-appreciation";
 import { updateStudentAppreciation } from "@/actions/update-appreciation";
 import type { GeneratedAppreciation } from "@/types/appreciations";
-import { generateGeneralAppreciation } from "@/actions/mistral";
+import { DEFAULT_APPRECIATION, DEFAULT_PROMPT } from "@/actions/appreciations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +38,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "@/components/ui/accordion";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",
@@ -72,6 +78,7 @@ export default function RemplirAppreciations() {
   const authStore = useAuthStore();
 
   const [promptInstruction, setPromptInstruction] = useState("");
+  const [userAppreciations, setUserAppreciations] = useState("");
   const [generatedAppreciation, setGeneratedAppreciation] = useState("");
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [isGenerating, startGeneration] = useTransition();
@@ -244,77 +251,176 @@ export default function RemplirAppreciations() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      <div>
-                        <Label htmlFor="prompt">Consigne pour la rédaction</Label>
-                        <Textarea
-                          id="prompt"
-                          placeholder='Ex: "Rédige une appréciation globale encourageante et précise, avec un ton neutre."'
-                          rows={3}
-                          value={promptInstruction}
-                          onChange={(event) =>
-                            setPromptInstruction(event.target.value)
-                          }
-                          className="mt-2"
-                        />
-                      </div>
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="prompt">
+                          <AccordionTrigger>Consigne pour la rédaction</AccordionTrigger>
+                          <AccordionContent>
+                            <Textarea
+                              id="prompt"
+                              placeholder={DEFAULT_PROMPT}
+                              rows={3}
+                              value={promptInstruction}
+                              onChange={(event) =>
+                                setPromptInstruction(event.target.value)
+                              }
+                            />
+                          </AccordionContent>
+                        </AccordionItem>
 
-                      <ScrollArea className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
-                        <div className="space-y-3 p-3 pr-4">
-                          {firstStudentRecap.subjects.map((subject) => (
-                            <Card key={`${subject.subjectName}-${subject.teachers}`}>
-                              <CardHeader className="p-4 pb-2">
-                                <CardTitle className="text-base font-semibold">
-                                  {subject.subjectName}
-                                </CardTitle>
-                                {subject.teachers && (
-                                  <CardDescription className="text-xs">
-                                    {subject.teachers}
-                                  </CardDescription>
+                        <AccordionItem value="appreciations">
+                          <AccordionTrigger>Appréciations de référence</AccordionTrigger>
+                          <AccordionContent>
+                            <Label htmlFor="user-appreciations" className="mb-2 block">
+                              Collez ici vos appréciations pour servir de modèle de style
+                            </Label>
+                            <Textarea
+                              id="user-appreciations"
+                              placeholder={DEFAULT_APPRECIATION}
+                              rows={8}
+                              value={userAppreciations}
+                              onChange={(event) =>
+                                setUserAppreciations(event.target.value)
+                              }
+                            />
+                          </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="test">
+                          <AccordionTrigger>Test de génération</AccordionTrigger>
+                          <AccordionContent className="space-y-4">
+                            <ScrollArea className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
+                              <div className="space-y-3 p-3 pr-4">
+                                {firstStudentRecap.subjects.map((subject) => (
+                                  <Card key={`${subject.subjectName}-${subject.teachers}`}>
+                                    <CardHeader className="p-4 pb-2">
+                                      <CardTitle className="text-base font-semibold">
+                                        {subject.subjectName}
+                                      </CardTitle>
+                                      {subject.teachers && (
+                                        <CardDescription className="text-xs">
+                                          {subject.teachers}
+                                        </CardDescription>
+                                      )}
+                                    </CardHeader>
+                                    <CardContent className="p-4 pt-0">
+                                      <p className="text-sm text-neutral-700">
+                                        {subject.appreciation ||
+                                          "Aucune appréciation disponible."}
+                                      </p>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            </ScrollArea>
+                            <Button
+                              type="button"
+                              disabled={isGenerating}
+                              onClick={() => {
+                                if (!firstStudentRecap) return;
+                                startGeneration(async () => {
+                                  try {
+                                    const appreciation = await generateGeneralAppreciation(
+                                      {
+                                        prompt: promptInstruction,
+                                        subjects: firstStudentRecap.subjects,
+                                        studentFirstName: firstStudentRecap.studentFirstName,
+                                        studentGender: firstStudentRecap.studentGender,
+                                        userAppreciations: userAppreciations || undefined
+                                      }
+                                    );
+                                    setGeneratedAppreciation(appreciation);
+                                    setGenerationError(null);
+                                  } catch (error) {
+                                    const message =
+                                      error instanceof Error
+                                        ? error.message
+                                        : "Impossible de générer l'appréciation.";
+                                    setGenerationError(message);
+                                  }
+                                });
+                              }}
+                              className="w-full"
+                            >
+                              {isGenerating
+                                ? "Génération en cours..."
+                                : "Voir l'appréciation générale générée pour le premier élève"}
+                            </Button>
+                            {generationError && (
+                              <p className="text-sm text-red-600">{generationError}</p>
+                            )}
+                            {generatedAppreciation && (
+                              <div className="space-y-2">
+                                <Label className="mb-2 block" htmlFor="generatedText">
+                                  Appréciation générée
+                                </Label>
+                                <Textarea
+                                  id="generatedText"
+                                  readOnly
+                                  value={generatedAppreciation}
+                                  className="min-h-32"
+                                />
+                                <Button
+                                  type="button"
+                                  disabled={
+                                    isUploading ||
+                                    !credentials ||
+                                    !classSummary ||
+                                    !firstStudentRecap
+                                  }
+                                  onClick={() => {
+                                    if (
+                                      !credentials ||
+                                      !classSummary ||
+                                      !firstStudentRecap
+                                    ) {
+                                      setUploadError(
+                                        "Données manquantes pour l'upload."
+                                      );
+                                      return;
+                                    }
+                                    startUpload(async () => {
+                                      try {
+                                        setUploadError(null);
+                                        setUploadSuccess(false);
+                                        await updateStudentAppreciation({
+                                          credentials,
+                                          studentId: firstStudentRecap.studentId,
+                                          classId: classSummary.classId,
+                                          periodCode: classSummary.periodCode,
+                                          appreciationText: generatedAppreciation
+                                        });
+                                        setUploadSuccess(true);
+                                      } catch (error) {
+                                        const message =
+                                          error instanceof Error
+                                            ? error.message
+                                            : "Impossible d'uploader l'appréciation.";
+                                        setUploadError(message);
+                                        setUploadSuccess(false);
+                                      }
+                                    });
+                                  }}
+                                  className="w-full"
+                                >
+                                  {isUploading
+                                    ? "Upload en cours..."
+                                    : "Uploader l'appréciation"}
+                                </Button>
+                                {uploadError && (
+                                  <p className="text-sm text-red-600">{uploadError}</p>
                                 )}
-                              </CardHeader>
-                              <CardContent className="p-4 pt-0">
-                                <p className="text-sm text-neutral-700">
-                                  {subject.appreciation ||
-                                    "Aucune appréciation disponible."}
-                                </p>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      </ScrollArea>
+                                {uploadSuccess && (
+                                  <p className="text-sm text-green-600">
+                                    Appréciation uploadée avec succès !
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                     </CardContent>
                     <CardFooter className="flex flex-wrap items-center justify-end gap-3">
-                      <Button
-                        type="button"
-                        disabled={isGenerating}
-                        onClick={() => {
-                          if (!firstStudentRecap) return;
-                          startGeneration(async () => {
-                            try {
-                              const appreciation = await generateGeneralAppreciation(
-                                {
-                                  prompt: promptInstruction,
-                                  subjects: firstStudentRecap.subjects,
-                                  studentFirstName: firstStudentRecap.studentFirstName,
-                                  studentGender: firstStudentRecap.studentGender
-                                }
-                              );
-                              setGeneratedAppreciation(appreciation);
-                              setGenerationError(null);
-                            } catch (error) {
-                              const message =
-                                error instanceof Error
-                                  ? error.message
-                                  : "Impossible de générer l'appréciation.";
-                              setGenerationError(message);
-                            }
-                          });
-                        }}
-                      >
-                        {isGenerating
-                          ? "Génération en cours..."
-                          : "Voir l'appréciation générale générée pour le premier élève"}
-                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
@@ -359,6 +465,7 @@ export default function RemplirAppreciations() {
                                         await generateBatchAppreciations({
                                           credentials,
                                           prompt: promptInstruction,
+                                          userAppreciations: userAppreciations || undefined,
                                           limit: 30
                                         });
                                       setBatchResults(results);
@@ -380,86 +487,6 @@ export default function RemplirAppreciations() {
                         </AlertDialogContent>
                       </AlertDialog>
                     </CardFooter>
-                    {generationError && (
-                      <CardFooter>
-                        <p className="text-sm text-red-600">{generationError}</p>
-                      </CardFooter>
-                    )}
-                    {generatedAppreciation && (
-                      <>
-                        <CardContent>
-                          <Label className="mb-2 block" htmlFor="generatedText">
-                            Appréciation générée
-                          </Label>
-                          <Textarea
-                            id="generatedText"
-                            readOnly
-                            value={generatedAppreciation}
-                            className="min-h-32"
-                          />
-                        </CardContent>
-                        <CardFooter className="flex flex-wrap items-center justify-end gap-3">
-                          <Button
-                            type="button"
-                            disabled={
-                              isUploading ||
-                              !credentials ||
-                              !classSummary ||
-                              !firstStudentRecap
-                            }
-                            onClick={() => {
-                              if (
-                                !credentials ||
-                                !classSummary ||
-                                !firstStudentRecap
-                              ) {
-                                setUploadError(
-                                  "Données manquantes pour l'upload."
-                                );
-                                return;
-                              }
-                              startUpload(async () => {
-                                try {
-                                  setUploadError(null);
-                                  setUploadSuccess(false);
-                                  await updateStudentAppreciation({
-                                    credentials,
-                                    studentId: firstStudentRecap.studentId,
-                                    classId: classSummary.classId,
-                                    periodCode: classSummary.periodCode,
-                                    appreciationText: generatedAppreciation
-                                  });
-                                  setUploadSuccess(true);
-                                } catch (error) {
-                                  const message =
-                                    error instanceof Error
-                                      ? error.message
-                                      : "Impossible d'uploader l'appréciation.";
-                                  setUploadError(message);
-                                  setUploadSuccess(false);
-                                }
-                              });
-                            }}
-                          >
-                            {isUploading
-                              ? "Upload en cours..."
-                              : "Uploader l'appréciation"}
-                          </Button>
-                        </CardFooter>
-                        {uploadError && (
-                          <CardFooter>
-                            <p className="text-sm text-red-600">{uploadError}</p>
-                          </CardFooter>
-                        )}
-                        {uploadSuccess && (
-                          <CardFooter>
-                            <p className="text-sm text-green-600">
-                              Appréciation uploadée avec succès !
-                            </p>
-                          </CardFooter>
-                        )}
-                      </>
-                    )}
                     {batchError && (
                       <CardFooter>
                         <p className="text-sm text-red-600">{batchError}</p>
