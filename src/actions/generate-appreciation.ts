@@ -56,7 +56,9 @@ export async function generateBatchAppreciations({
     const recap = await buildStudentRecap(session, student);
     const appreciation = await generateGeneralAppreciation({
       prompt,
-      subjects: recap.subjects
+      subjects: recap.subjects,
+      studentFirstName: student.firstName,
+      studentGender: student.gender
     });
 
     await uploadGeneratedAppreciation({

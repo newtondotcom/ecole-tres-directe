@@ -20,6 +20,8 @@ export type SubjectAppreciation = {
 export type StudentRecap = {
   studentId: number;
   studentName: string;
+  studentFirstName: string;
+  studentGender: "M" | "F";
   periodName: string;
   subjects: SubjectAppreciation[];
 };
