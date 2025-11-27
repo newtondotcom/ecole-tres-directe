@@ -21,11 +21,11 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import {
-  generateBatchAppreciations,
-  generateGeneralAppreciation
+  generateBatchAppreciations
 } from "@/actions/generate-appreciation";
 import { updateStudentAppreciation } from "@/actions/update-appreciation";
 import type { GeneratedAppreciation } from "@/types/appreciations";
+import { generateGeneralAppreciation } from "@/actions/mistral";
 import {
   AlertDialog,
   AlertDialogAction,
