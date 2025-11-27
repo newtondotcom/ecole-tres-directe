@@ -159,8 +159,8 @@ export default function LoginPage() {
   }, [extensionDetected, isSubmitting, status]);
 
   return (
-    <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-10">
-      <div className={cn("w-full max-w-3xl flex flex-col gap-6")}>
+    <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-10 relative z-10">
+      <div className={cn("w-full max-w-3xl flex flex-col gap-6 relative z-10")}>
         <Card className="overflow-hidden">
           <CardContent className="grid p-0 md:grid-cols-2">
             <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
