@@ -146,7 +146,7 @@ export default function RemplirAppreciations() {
                     disabled={!isAuthenticated || isLoading}
                     className="flex-1"
                   >
-                    {isLoading ? "Chargement…" : "Charger ma classe"}
+                    {isLoading ? "Chargement…" : "Charger ma classe principale"}
                   </Button>
                   {(step === "ready" || step === "error") && (
                     <Button
@@ -313,13 +313,13 @@ export default function RemplirAppreciations() {
                       >
                         {isGenerating
                           ? "Génération en cours..."
-                          : "Voir l'appréciation générale générée"}
+                          : "Voir l'appréciation générale générée pour le premier élève"}
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             type="button"
-                            variant="outline"
+                            variant="destructive"
                             disabled={isBatching}
                           >
                             {isBatching
@@ -398,7 +398,7 @@ export default function RemplirAppreciations() {
                             className="min-h-32"
                           />
                         </CardContent>
-                        <CardFooter>
+                        <CardFooter className="flex flex-wrap items-center justify-end gap-3">
                           <Button
                             type="button"
                             disabled={
