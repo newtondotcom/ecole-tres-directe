@@ -44,6 +44,7 @@ import {
   AccordionItem,
   AccordionTrigger
 } from "@/components/ui/accordion";
+import { generateGeneralAppreciation } from "@/actions/mistral";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",
