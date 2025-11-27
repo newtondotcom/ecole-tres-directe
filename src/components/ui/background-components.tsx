@@ -1,6 +1,5 @@
 export const Background = () => {
   return (
-   <div className="h-full w-full relative bg-white">
   <div
     className="absolute inset-0 z-0"
     style={{
@@ -11,6 +10,5 @@ export const Background = () => {
       mixBlendMode: "multiply",
     }}
   />
-</div>
   );
 };
