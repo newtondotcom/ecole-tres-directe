@@ -17,7 +17,7 @@
         "motion": "^12.23.24",
         "next": "16.0.3",
         "next-themes": "^0.4.6",
-        "pawdirecte-teacher": "^2.1.3",
+        "pawdirecte-teacher": "^2.1.4",
         "react": "19.2.0",
         "react-dom": "19.2.0",
         "sonner": "^2.0.7",
@@ -782,7 +782,7 @@
 
     "path-parse": ["path-parse@1.0.7", "", {}, "sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw=="],
 
-    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.3", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.7" } }, "sha512-mNyn0umt2I0H3tysby0YiLr+SNWUvD6+NayN59fVlts/bg1vunE9kj4E3WZem+gowWZH3dPrUoSj4rArz0Ek4Q=="],
+    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.4", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.7" } }, "sha512-YMig79ICit0ER+T+vPEkH/bVipyjcfq+k7s4gwwvq4c+MkpOztwxIEuaRyhyn1vO/ongFkYsV1GOO4bQFUDhxQ=="],
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
