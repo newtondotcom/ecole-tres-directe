@@ -3,48 +3,38 @@
 import {
   teacherClassCouncil,
   updateTeacherClassCouncilStudent,
-  type Session,
   type TeacherClassCouncilStudentUpdatePayload
 } from "pawdirecte-teacher";
 
-import { loginUsingCredentials } from "@/lib/pawdirecte";
-import type { Credentials } from "@/types/appreciations";
+import { useAuthStore } from "@/store/auth";
 
 type UpdateStudentAppreciationParams = {
-  credentials: Credentials;
   studentId: number;
   classId: number;
   periodCode: string;
   appreciationText: string;
-  // Optional: if session and account are provided, skip re-authentication
-  session?: Session;
-  accountId?: number;
 };
 
 export async function updateStudentAppreciation({
-  credentials,
   studentId,
   classId,
   periodCode,
-  appreciationText,
-  session: providedSession,
-  accountId: providedAccountId
+  appreciationText
 }: UpdateStudentAppreciationParams) {
-  // Re-authenticate only if session not provided
-  let session: Session;
-  let accountId: number;
+  const authStore = useAuthStore.getState();
 
-  if (providedSession && providedAccountId) {
-    session = providedSession;
-    accountId = providedAccountId;
-  } else {
-    const { session: newSession, account } = await loginUsingCredentials(
-      credentials.username,
-      credentials.password
+  if (
+    !authStore.session ||
+    !authStore.account ||
+    !authStore.credentials
+  ) {
+    throw new Error(
+      "Aucune session active. Veuillez vous connecter depuis la page de connexion."
     );
-    session = newSession;
-    accountId = account.id;
   }
+
+  const session = authStore.session;
+  const accountId = authStore.account.id;
 
   // Fetch the council to get current student data
   const council = await teacherClassCouncil(

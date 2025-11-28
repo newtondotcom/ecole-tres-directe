@@ -9,35 +9,40 @@ import {
   type TeacherClassCouncilStudentUpdatePayload
 } from "pawdirecte-teacher";
 
-import { loginUsingCredentials } from "@/lib/pawdirecte";
 import {
   buildStudentRecap,
   findFirstPrincipalClass
 } from "@/actions/appreciations";
-import type {
-  Credentials,
-  GeneratedAppreciation,
-} from "@/types/appreciations";
+import type { GeneratedAppreciation } from "@/types/appreciations";
 import { generateGeneralAppreciation } from "@/actions/mistral";
+import { useAuthStore } from "@/store/auth";
 
 
 type GenerateBatchParams = {
-  credentials: Credentials;
   prompt: string;
   userAppreciations?: string;
   limit?: number;
 };
 
 export async function generateBatchAppreciations({
-  credentials,
   prompt,
   userAppreciations,
   limit = 30
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
-  const { session, account } = await loginUsingCredentials(
-    credentials.username,
-    credentials.password
-  );
+  const authStore = useAuthStore.getState();
+
+  if (
+    !authStore.session ||
+    !authStore.account ||
+    !authStore.credentials
+  ) {
+    throw new Error(
+      "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+    );
+  }
+
+  const session = authStore.session;
+  const account = authStore.account;
 
   const classSummary = await findFirstPrincipalClass(session, account.id);
   const council = await teacherClassCouncil(

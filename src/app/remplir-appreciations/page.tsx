@@ -73,8 +73,7 @@ export default function RemplirAppreciations() {
     firstStudentRecap,
     students,
     getAppreciationsData,
-    reset,
-    credentials
+    reset
   } = useAppreciationsStore();
   const authStore = useAuthStore();
 
@@ -364,13 +363,15 @@ export default function RemplirAppreciations() {
                                   type="button"
                                   disabled={
                                     isUploading ||
-                                    !credentials ||
+                                    !authStore.session ||
+                                    !authStore.account ||
                                     !classSummary ||
                                     !firstStudentRecap
                                   }
                                   onClick={() => {
                                     if (
-                                      !credentials ||
+                                      !authStore.session ||
+                                      !authStore.account ||
                                       !classSummary ||
                                       !firstStudentRecap
                                     ) {
@@ -384,7 +385,6 @@ export default function RemplirAppreciations() {
                                         setUploadError(null);
                                         setUploadSuccess(false);
                                         await updateStudentAppreciation({
-                                          credentials,
                                           studentId: firstStudentRecap.studentId,
                                           classId: classSummary.classId,
                                           periodCode: classSummary.periodCode,
@@ -454,17 +454,10 @@ export default function RemplirAppreciations() {
                                 type="button"
                                 disabled={isBatching}
                                 onClick={() => {
-                                  if (!credentials) {
-                                    setBatchError(
-                                      "Veuillez vous reconnecter pour lancer la génération de lot."
-                                    );
-                                    return;
-                                  }
                                   startBatchGeneration(async () => {
                                     try {
                                       const results =
                                         await generateBatchAppreciations({
-                                          credentials,
                                           prompt: promptInstruction,
                                           userAppreciations: userAppreciations || undefined,
                                           limit: 30
