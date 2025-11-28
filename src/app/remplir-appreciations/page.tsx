@@ -89,7 +89,7 @@ export default function RemplirAppreciations() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const hasRecap = Boolean(firstStudentRecap);
-  const isAuthenticated = authStore.isAuthenticated;
+  const isAuthenticated = authStore.isAuthenticated();
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
@@ -243,12 +243,8 @@ export default function RemplirAppreciations() {
                   <Card className="h-full">
                     <CardHeader>
                       <CardTitle>
-                        Appercu de la génération de l&apos;appréciation générale
+                        Génération des appréciations générales
                       </CardTitle>
-                      <CardDescription>
-                        {firstStudentRecap.studentName} —{" "}
-                        {firstStudentRecap.periodName}
-                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <Accordion type="single" collapsible className="w-full">
@@ -288,6 +284,11 @@ export default function RemplirAppreciations() {
                         <AccordionItem value="test">
                           <AccordionTrigger>Test de génération</AccordionTrigger>
                           <AccordionContent className="space-y-4">
+
+                          <div className="text-sm text-neutral-500">
+                            <span className="font-bold">{firstStudentRecap.studentName}</span> —{" "}
+                            <span className="font-semibold">{firstStudentRecap.periodName}</span>
+                          </div>
                             <ScrollArea className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
                               <div className="space-y-3 p-3 pr-4">
                                 {firstStudentRecap.subjects.map((subject) => (
