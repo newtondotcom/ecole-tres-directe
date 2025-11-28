@@ -14,7 +14,6 @@ type AuthState = {
   account?: Account;
   rememberMe: boolean;
   isLoading: boolean;
-  isAuthenticated: boolean;
   error?: string;
 };
 
@@ -23,6 +22,7 @@ type AuthActions = {
   validatePersistedSession: (password: string) => Promise<void>;
   setAuthData: (payload: AuthState) => void;
   resetAuthData: () => void;
+  isAuthenticated: () => boolean;
 };
 
 export type AuthStore = AuthState & AuthActions;
@@ -33,13 +33,12 @@ const initialState: AuthState = {
   account: undefined,
   rememberMe: false,
   isLoading: false,
-  isAuthenticated: false,
   error: undefined
 };
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set,get) => ({
       ...initialState,
       authenticate: async ({ username, password }, rememberMe = false) => {
         set({
@@ -58,7 +57,6 @@ export const useAuthStore = create<AuthStore>()(
             account,
             rememberMe,
             isLoading: false,
-            isAuthenticated: true,
             error: undefined
           });
         } catch (error) {
@@ -90,7 +88,6 @@ export const useAuthStore = create<AuthStore>()(
             session,
             account,
             isLoading: false,
-            isAuthenticated: true,
             error: undefined
           });
         } catch (error) {
@@ -109,12 +106,13 @@ export const useAuthStore = create<AuthStore>()(
       setAuthData: (payload) =>
         set(() => ({
           ...initialState,
-          ...payload,
-          isAuthenticated: Boolean(
-            payload.session && payload.account && payload.credentials
-          )
+          ...payload
         })),
-      resetAuthData: () => set(() => initialState)
+      resetAuthData: () => set(() => initialState),
+      isAuthenticated: () => {
+        const state = get();
+        return Boolean(state.session && state.account);
+      }
     }),
     {
       name: "auth-storage",
