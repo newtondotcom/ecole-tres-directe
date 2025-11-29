@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import {
   teacherClassCouncil,
   teacherGrades,
@@ -46,90 +47,124 @@ export async function fetchAppreciationsData({
   session,
   account
 }: FetchAppreciationsParams): Promise<AppreciationsServerResult> {
-  const classSummary = await findFirstPrincipalClass(session, account.id);
+  try {
+    const classSummary = await findFirstPrincipalClass(session, account.id);
 
-  const council = await teacherClassCouncil(
-    session,
-    account.id,
-    classSummary.classId,
-    classSummary.periodCode
-  );
+    const council = await teacherClassCouncil(
+      session,
+      account.id,
+      classSummary.classId,
+      classSummary.periodCode
+    );
 
-  if (!council.students.length) {
-    throw new Error("Aucun élève trouvé pour cette classe.");
+    if (!council.students.length) {
+      const error = new Error("Aucun élève trouvé pour cette classe.");
+      Sentry.captureException(error, {
+        tags: { function: "fetchAppreciationsData" },
+        extra: { classId: classSummary.classId, periodCode: classSummary.periodCode }
+      });
+      throw error;
+    }
+
+    const students: StudentSummary[] = council.students.map((student) => ({
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName
+    }));
+
+    const firstStudentRecap = await buildStudentRecap(session, council.students[0]);
+
+    return {
+      classSummary,
+      students,
+      firstStudentRecap,
+      session,
+      account
+    };
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { function: "fetchAppreciationsData" },
+      extra: { accountId: account.id }
+    });
+    throw error;
   }
-
-  const students: StudentSummary[] = council.students.map((student) => ({
-    id: student.id,
-    firstName: student.firstName,
-    lastName: student.lastName
-  }));
-
-  const firstStudentRecap = await buildStudentRecap(session, council.students[0]);
-
-  return {
-    classSummary,
-    students,
-    firstStudentRecap,
-    session,
-    account
-  };
 }
 
 export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number
 ): Promise<PrincipalClassSummary> {
-  const levels = await teacherLevelsList(session, teacherId);
+  try {
+    const levels = await teacherLevelsList(session, teacherId);
 
-  for (const school of levels.schools) {
-    for (const level of school.levels) {
-      for (const classItem of level.classes) {
-        if (!classItem.isCurrentUserPrincipal) continue;
-        const period = classItem.periods[0];
-        if (!period) continue;
-        return {
-          schoolName: school.label,
-          levelName: level.label,
-          classId: classItem.id,
-          classLabel: classItem.label,
-          periodCode: period.code
-        };
+    for (const school of levels.schools) {
+      for (const level of school.levels) {
+        for (const classItem of level.classes) {
+          if (!classItem.isCurrentUserPrincipal) continue;
+          const period = classItem.periods[0];
+          if (!period) continue;
+          return {
+            schoolName: school.label,
+            levelName: level.label,
+            classId: classItem.id,
+            classLabel: classItem.label,
+            periodCode: period.code
+          };
+        }
       }
     }
-  }
 
-  throw new Error(
-    "Impossible de trouver une classe où vous êtes professeur principal."
-  );
+    const error = new Error(
+      "Impossible de trouver une classe où vous êtes professeur principal."
+    );
+    Sentry.captureException(error, {
+      tags: { function: "findFirstPrincipalClass" },
+      extra: { teacherId }
+    });
+    throw error;
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { function: "findFirstPrincipalClass" },
+      extra: { teacherId }
+    });
+    throw error;
+  }
 }
 
 export async function buildStudentRecap(
   session: Session,
   student: TeacherClassCouncilStudent
 ): Promise<StudentRecap> {
-  const gradesResponse = await teacherGrades(session, student.id, "");
-  const period = findPeriodWithSummary(gradesResponse);
-  const periodName = period?.name ?? "Période inconnue";
-  const subjects = period?.subjectsSummary?.subjects ?? [];
+  try {
+    const gradesResponse = await teacherGrades(session, student.id, "");
+    const period = findPeriodWithSummary(gradesResponse);
+    const periodName = period?.name ?? "Période inconnue";
+    const subjects = period?.subjectsSummary?.subjects ?? [];
 
-  const formattedSubjects: SubjectAppreciation[] = subjects.map((subject) => ({
-    subjectName: subject.name,
-    teachers: (subject.teachers ?? [])
-      .map((teacher) => teacher.name)
-      .filter(Boolean)
-      .join(", "),
-    appreciation: (subject.appreciations?.[0] ?? "").trim()
-  }));
+    const formattedSubjects: SubjectAppreciation[] = subjects.map((subject) => ({
+      subjectName: subject.name,
+      teachers: (subject.teachers ?? [])
+        .map((teacher) => teacher.name)
+        .filter(Boolean)
+        .join(", "),
+      appreciation: (subject.appreciations?.[0] ?? "").trim()
+    }));
 
-  return {
-    studentId: student.id,
-    studentName: `${student.firstName} ${student.lastName}`.trim(),
-    studentFirstName: student.firstName,
-    studentGender: student.gender,
-    periodName,
-    subjects: formattedSubjects
-  };
+    return {
+      studentId: student.id,
+      studentName: `${student.firstName} ${student.lastName}`.trim(),
+      studentFirstName: student.firstName,
+      studentGender: student.gender,
+      periodName,
+      subjects: formattedSubjects
+    };
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { function: "buildStudentRecap" },
+      extra: { studentId: student.id, studentName: `${student.firstName} ${student.lastName}` }
+    });
+    throw error;
+  }
 }
 
 function findPeriodWithSummary(grades: TeacherGradesResponse) {

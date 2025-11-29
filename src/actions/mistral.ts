@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import type {
   SubjectAppreciation
 } from "@/types/appreciations";
@@ -22,74 +23,110 @@ export async function generateGeneralAppreciation({
   studentGender,
   userAppreciations
 }: GenerateAppreciationParams) {
-  const apiKey = process.env.MISTRAL_API_KEY;
+  try {
+    const apiKey = process.env.MISTRAL_API_KEY;
 
-  if (!apiKey) {
-    throw new Error(
-      "La clé MISTRAL_API_KEY est manquante dans les variables d'environnement."
-    );
-  }
-
-  if (!subjects.length) {
-    throw new Error(
-      "Impossible de générer l'appréciation sans données de matières."
-    );
-  }
-
-  const placeholderName = studentGender === "F" ? "Marie" : "Pierre";
-  const nameTransformer = createNameTransformer(
-    studentFirstName,
-    placeholderName
-  );
-  const sanitizedPrompt = nameTransformer.anonymize(prompt ?? "");
-  const sanitizedSubjects = subjects.map((subject) => ({
-    ...subject,
-    appreciation: nameTransformer.anonymize(subject.appreciation)
-  }));
-
-  const messages = [
-    {
-      role: "system",
-      content:
-        "Tu es un professeur principal français. Tu rédiges des appréciations globales synthétiques en te basant sur les appréciations matières existantes."
-    },
-    {
-      role: "user",
-      content: buildUserPrompt(sanitizedPrompt, sanitizedSubjects, userAppreciations)
+    if (!apiKey) {
+      const error = new Error(
+        "La clé MISTRAL_API_KEY est manquante dans les variables d'environnement."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" }
+      });
+      throw error;
     }
-  ];
 
-  const response = await fetch(MISTRAL_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "mistral-large-latest",
-      messages,
-      temperature: 0.4,
-      max_tokens: 300
-    })
-  });
+    if (!subjects.length) {
+      const error = new Error(
+        "Impossible de générer l'appréciation sans données de matières."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" }
+      });
+      throw error;
+    }
 
-  if (!response.ok) {
-    const details = await response.text();
-    throw new Error(
-      `Échec de la génération de l'appréciation (code ${response.status}): ${details}`
+    const placeholderName = studentGender === "F" ? "Marie" : "Pierre";
+    const nameTransformer = createNameTransformer(
+      studentFirstName,
+      placeholderName
     );
+    const sanitizedPrompt = nameTransformer.anonymize(prompt ?? "");
+    const sanitizedSubjects = subjects.map((subject) => ({
+      ...subject,
+      appreciation: nameTransformer.anonymize(subject.appreciation)
+    }));
+
+    const messages = [
+      {
+        role: "system",
+        content:
+          "Tu es un professeur principal français. Tu rédiges des appréciations globales synthétiques en te basant sur les appréciations matières existantes."
+      },
+      {
+        role: "user",
+        content: buildUserPrompt(sanitizedPrompt, sanitizedSubjects, userAppreciations)
+      }
+    ];
+
+    const response = await fetch(MISTRAL_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "mistral-large-latest",
+        messages,
+        temperature: 0.4,
+        max_tokens: 300
+      })
+    });
+
+    if (!response.ok) {
+      const details = await response.text();
+      const error = new Error(
+        `Échec de la génération de l'appréciation (code ${response.status}): ${details}`
+      );
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" },
+        extra: { status: response.status, details }
+      });
+      throw error;
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+
+    if (!content) {
+      const error = new Error(
+        "La réponse de Mistral ne contient pas de contenu exploitable."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" },
+        extra: { responseData: data }
+      });
+      throw error;
+    }
+
+    try {
+      return nameTransformer.deanonymize(sanitizeAppreciation(content));
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" },
+        extra: { content }
+      });
+      throw error;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      Sentry.captureException(error, {
+        tags: { function: "generateGeneralAppreciation" },
+        extra: { studentFirstName, studentGender, subjectsCount: subjects.length }
+      });
+    }
+    throw error;
   }
-
-  const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content;
-
-  if (!content) {
-    throw new Error(
-      "La réponse de Mistral ne contient pas de contenu exploitable."
-    );
-  }
-
-  return nameTransformer.deanonymize(sanitizeAppreciation(content));
 }
 
 function buildUserPrompt(prompt: string, subjects: SubjectAppreciation[], userAppreciations?: string) {

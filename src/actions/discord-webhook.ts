@@ -1,5 +1,7 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
+
 type DiscordWebhookMessage = {
   content?: string;
   username?: string;
@@ -33,19 +35,28 @@ export async function sendDiscordMessage({
   avatar_url,
   embeds,
 }: SendDiscordMessageParams) {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  try {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-  if (!webhookUrl) {
-    throw new Error(
-      "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement."
-    );
-  }
+    if (!webhookUrl) {
+      const error = new Error(
+        "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "sendDiscordMessage" }
+      });
+      throw error;
+    }
 
-  if (!content && !embeds?.length) {
-    throw new Error(
-      "Le message doit contenir au moins un contenu ou un embed."
-    );
-  }
+    if (!content && !embeds?.length) {
+      const error = new Error(
+        "Le message doit contenir au moins un contenu ou un embed."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "sendDiscordMessage" }
+      });
+      throw error;
+    }
 
   const payload: DiscordWebhookMessage = {};
 
@@ -65,31 +76,51 @@ export async function sendDiscordMessage({
     payload.embeds = embeds;
   }
 
-  try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Échec de l'envoi du message Discord (${response.status}): ${errorText}`
-      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        const error = new Error(
+          `Échec de l'envoi du message Discord (${response.status}): ${errorText}`
+        );
+        Sentry.captureException(error, {
+          tags: { function: "sendDiscordMessage" },
+          extra: { status: response.status, errorText }
+        });
+        throw error;
+      }
+
+      return {
+        success: true,
+        message: "Message envoyé avec succès à Discord.",
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        Sentry.captureException(error, {
+          tags: { function: "sendDiscordMessage" }
+        });
+        throw new Error(`Erreur lors de l'envoi à Discord: ${error.message}`);
+      }
+      const unknownError = new Error("Erreur inconnue lors de l'envoi à Discord.");
+      Sentry.captureException(unknownError, {
+        tags: { function: "sendDiscordMessage" }
+      });
+      throw unknownError;
     }
-
-    return {
-      success: true,
-      message: "Message envoyé avec succès à Discord.",
-    };
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Erreur lors de l'envoi à Discord: ${error.message}`);
+      Sentry.captureException(error, {
+        tags: { function: "sendDiscordMessage" }
+      });
     }
-    throw new Error("Erreur inconnue lors de l'envoi à Discord.");
+    throw error;
   }
 }
 

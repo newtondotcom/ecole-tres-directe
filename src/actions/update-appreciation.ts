@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import {
   teacherClassCouncil,
   updateTeacherClassCouncilStudent,
@@ -21,71 +22,93 @@ export async function updateStudentAppreciation({
   periodCode,
   appreciationText
 }: UpdateStudentAppreciationParams) {
-  const authStore = useAuthStore.getState();
+  try {
+    const authStore = useAuthStore.getState();
 
-  if (
-    !authStore.session ||
-    !authStore.account ||
-    !authStore.credentials
-  ) {
-    throw new Error(
-      "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+    if (
+      !authStore.session ||
+      !authStore.account ||
+      !authStore.credentials
+    ) {
+      const error = new Error(
+        "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+      );
+      Sentry.captureException(error, {
+        tags: { function: "updateStudentAppreciation" }
+      });
+      throw error;
+    }
+
+    const session = authStore.session;
+    const accountId = authStore.account.id;
+
+    // Fetch the council to get current student data
+    const council = await teacherClassCouncil(
+      session,
+      accountId,
+      classId,
+      periodCode
     );
-  }
 
-  const session = authStore.session;
-  const accountId = authStore.account.id;
+    if (!council.students.length) {
+      const error = new Error("Aucun élève trouvé dans cette classe.");
+      Sentry.captureException(error, {
+        tags: { function: "updateStudentAppreciation" },
+        extra: { classId, periodCode }
+      });
+      throw error;
+    }
 
-  // Fetch the council to get current student data
-  const council = await teacherClassCouncil(
-    session,
-    accountId,
-    classId,
-    periodCode
-  );
+    // Find the specific student
+    const student = council.students.find((s) => s.id === studentId);
 
-  if (!council.students.length) {
-    throw new Error("Aucun élève trouvé dans cette classe.");
-  }
+    if (!student) {
+      const error = new Error(
+        `Élève avec l'ID ${studentId} introuvable dans cette classe.`
+      );
+      Sentry.captureException(error, {
+        tags: { function: "updateStudentAppreciation" },
+        extra: { studentId, classId, periodCode }
+      });
+      throw error;
+    }
 
-  // Find the specific student
-  const student = council.students.find((s) => s.id === studentId);
-
-  if (!student) {
-    throw new Error(
-      `Élève avec l'ID ${studentId} introuvable dans cette classe.`
-    );
-  }
-
-  // Build the update payload
-  const payload: TeacherClassCouncilStudentUpdatePayload = {
-    student: {
-      ...student,
-      appreciationPrincipalTeacher: {
-        ...student.appreciationPrincipalTeacher,
-        text: appreciationText.trim(),
-        date: new Date()
-      }
-    },
-    classAppreciation: council.classAppreciation
-      ? {
-          ...council.classAppreciation,
+    // Build the update payload
+    const payload: TeacherClassCouncilStudentUpdatePayload = {
+      student: {
+        ...student,
+        appreciationPrincipalTeacher: {
+          ...student.appreciationPrincipalTeacher,
+          text: appreciationText.trim(),
           date: new Date()
         }
-      : undefined
-  };
+      },
+      classAppreciation: council.classAppreciation
+        ? {
+            ...council.classAppreciation,
+            date: new Date()
+          }
+        : undefined
+    };
 
-  // Update the student's appreciation
-  const result = await updateTeacherClassCouncilStudent(
-    session,
-    accountId,
-    classId,
-    periodCode,
-    payload
-  );
+    // Update the student's appreciation
+    const result = await updateTeacherClassCouncilStudent(
+      session,
+      accountId,
+      classId,
+      periodCode,
+      payload
+    );
 
-  return {
-    success: true,
-    result
-  };
+    return {
+      success: true,
+      result
+    };
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { function: "updateStudentAppreciation" },
+      extra: { studentId, classId, periodCode }
+    });
+    throw error;
+  }
 }

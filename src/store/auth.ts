@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Account, type Session } from "pawdirecte-teacher";
@@ -64,6 +65,10 @@ export const useAuthStore = create<AuthStore>()(
             error instanceof Error
               ? error.message
               : "Une erreur inattendue est survenue.";
+          Sentry.captureException(error, {
+            tags: { function: "authenticate", store: "auth" },
+            extra: { username, rememberMe }
+          });
           toast.error(message);
           set({
             ...initialState,
@@ -95,6 +100,9 @@ export const useAuthStore = create<AuthStore>()(
             error instanceof Error
               ? error.message
               : "Impossible de valider la session.";
+          Sentry.captureException(error, {
+            tags: { function: "validatePersistedSession", store: "auth" }
+          });
           toast.error(message);
           set({
             ...initialState,
