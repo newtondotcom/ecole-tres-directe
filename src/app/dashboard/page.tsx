@@ -25,7 +25,8 @@ import {
   Home, 
   MessageSquare, 
   Settings,
-  LogOut 
+  LogOut,
+  Toilet
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { useRouter, usePathname } from "next/navigation";
@@ -69,7 +70,7 @@ export default function DashboardPage() {
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-1.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <FileText className="h-4 w-4" />
+              <Toilet className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold">Ecole Tres Directe</span>
