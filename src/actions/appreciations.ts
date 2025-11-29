@@ -19,8 +19,8 @@ import type {
   StudentSummary
 } from "@/types/appreciations";
 
-export const DEFAULT_APPRECIATION = `
-Un trimestre avec des résultats hétérogènes pour Adam. Vous produisez un travail sérieux manquant de régularité dans certaines disciplines. Vous avez montré une belle implication en classe soulignée par plusieurs professeurs, il faut maintenant l'étendre à toutes les disciplines. Allez Adam !
+export const DEFAULT_APPRECIATION = 
+`Un trimestre avec des résultats hétérogènes pour Adam. Vous produisez un travail sérieux manquant de régularité dans certaines disciplines. Vous avez montré une belle implication en classe soulignée par plusieurs professeurs, il faut maintenant l'étendre à toutes les disciplines. Allez Adam !
 Un deuxième trimestre dans la continuité du premier au niveau des résultats. La participation est active et Louis est davantage impliqué en classe. Cependant, des efforts sont toujours attendus quant à votre concentration et attitude qui se montrent trop fluctuantes. Le travail personnel est sérieux, mais se doit de gagner en rigueur afin de progresser.
 Un deuxième trimestre avec des résultats satisfaisants. La participation de Gabriel en classe est appréciée, mais est, dans certaines disciplines, effacée par un comportement qui n'est pas toujours au travail. Le travail fourni est satisfaisant. Pour autant, nous sommes convaincus que vous avez encore la capacité de progresser en approfondissant le travail personnel.
 Manon est une élève très investie, qui travaille avec l'envie de bien faire. Elle rencontre des difficultés dans certaines matières, notamment dans la restitution des connaissances. Un approfondissement des leçons semble indispensable pour lui permettre de progresser et consolider durablement ses acquis. Nous l'encourageons à croire davantage en ses capacités. L'erreur n'est pas un échec.
@@ -33,8 +33,7 @@ Très bons résultats. Kenzo est un élève vif et pertinent mais il doit appren
 Ensemble tout à fait satisfaisant. Carla travaille avec sérieux mais peut encore progresser en généralisant les efforts de participation à toutes les matières. Nous comptons sur elle pour tenir compte de ces conseils.
 Un premier trimestre encourageant.La maîtrise des connaissances et des compétences est très satisfaisante. Lucas doit montrer son implication en restant concentré. Nous l'encourageons dans cette voie.
 Très bonne entrée en classe de 6ème pour Ombline. Le niveau d'ensemble témoigne d'un investissement sérieux et réfléchi. Nous vous invitons à tenir compte des remarques de vos professeurs qui vous conseillent de participer davantage à l'oral. Vos connaissances sont solides, osez donc les partager avec l'ensemble de la classe pour continuer à gagner en confiance.
-Un beau premier trimestre.La maîtrise des connaissances et des compétences est très satisfaisante. Martin s'investit avec sérieux et doit poursuivre ainsi tout en s'affirmant plus régulièrement à l'oral.
-`;
+Un beau premier trimestre.La maîtrise des connaissances et des compétences est très satisfaisante. Martin s'investit avec sérieux et doit poursuivre ainsi tout en s'affirmant plus régulièrement à l'oral.`;
 
 export const DEFAULT_PROMPT = "Rédige une appréciation globale encourageante et précise, avec un ton neutre et un vocabulaire accessible.";
 
