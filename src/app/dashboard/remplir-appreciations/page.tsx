@@ -342,6 +342,11 @@ export default function RemplirAppreciations() {
                                     );
                                     setGeneratedAppreciation(appreciation);
                                     setGenerationError(null);
+
+                                    if (appreciation.length > 400) {
+                                      const error = new Error("L'appréciation générée est trop longue.");
+                                      throw error;
+                                    }
                                   } catch (error) {
                                     const message =
                                       error instanceof Error

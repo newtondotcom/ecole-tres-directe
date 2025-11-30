@@ -152,7 +152,7 @@ function buildUserPrompt(prompt: string, subjects: SubjectAppreciation[], userAp
   return `Consigne: ${instruction}
 
 Contraintes de sortie:
-- Le texte doit être une seule appréciation générale (1 à 3 phrases assez courtes en maximum 300 caractères).
+- Le texte doit être une seule appréciation générale (1 à 3 phrases assez courtes en maximum 200 caractères).
 - Aucune phrase introductive ou conclusion de type "Voici..." ou "En résumé".
 - Pas de mise en forme Markdown ni de caractères gras (**).
 - Réponds uniquement avec l'appréciation finale, rien d'autre.

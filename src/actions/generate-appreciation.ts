@@ -80,6 +80,11 @@ export async function generateBatchAppreciations({
           userAppreciations: userAppreciations || undefined
         });
 
+        if (appreciation.length > 400) {
+          const error = new Error("L'appréciation générée est trop longue.");
+          throw error;
+        }
+
         await uploadGeneratedAppreciation({
           session,
           teacherId: account.id,
