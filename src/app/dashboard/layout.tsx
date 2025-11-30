@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Sidebar,
@@ -63,6 +63,21 @@ export default function DashboardLayout({
   const { account, resetAuthData, isAuthenticated, isLoading, isPatreonSubscribed } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Fix hydration mismatch by only rendering client-side dependent content after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Don't render anything on server side to avoid hydration mismatch
+  if (typeof window === 'undefined') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-muted-foreground">Chargement...</div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated()) {
@@ -75,8 +90,8 @@ export default function DashboardLayout({
     router.push("/login");
   };
 
-  // Show nothing while checking authentication
-  if (isLoading) {
+  // Show nothing while checking authentication or before mount
+  if (isLoading || !isMounted) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-muted-foreground">Chargement...</div>
@@ -112,9 +127,11 @@ export default function DashboardLayout({
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <div className="px-2">
-                <Calendar />
-              </div>
+              {isMounted && (
+                <div className="px-2">
+                  <Calendar />
+                </div>
+              )}
             </SidebarGroupContent>
           </SidebarGroup>
           <SidebarGroup>
@@ -137,25 +154,24 @@ export default function DashboardLayout({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              
-                {isPatreonSubscribed !== undefined && (
-                    <SidebarMenuButton asChild>
-                        <Link href="https://www.patreon.com/ecoletresdirecte" target="_blank">
-                      <div className="flex items-center cursor-pointer">
-                        {isPatreonSubscribed ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <XCircle className="h-4 w-4 text-red-500" />
-                        )}
-                        <span className={cn("text-xs font-bold ml-2" , isPatreonSubscribed ? "text-green-500" : "text-red-500")}>
-                          {isPatreonSubscribed
-                            ? "Abonné au Patreon, merci !"
-                            : "Pas abonné au Patreon..."}
-                        </span>
-                      </div>
-                      </Link>
-                  </SidebarMenuButton>
-                )}
+              {isPatreonSubscribed !== undefined && (
+                <SidebarMenuButton asChild>
+                  <Link href="https://www.patreon.com/ecoletresdirecte" target="_blank">
+                    <div className="flex items-center cursor-pointer">
+                      {isPatreonSubscribed ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-500" />
+                      )}
+                      <span className={cn("text-xs font-bold ml-2", isPatreonSubscribed ? "text-green-500" : "text-red-500")}>
+                        {isPatreonSubscribed
+                          ? "Abonné au Patreon, merci !"
+                          : "Pas abonné au Patreon..."}
+                      </span>
+                    </div>
+                  </Link>
+                </SidebarMenuButton>
+              )}
               <SidebarMenuButton onClick={handleLogout}>
                 <LogOut />
                 <span>Déconnexion</span>
