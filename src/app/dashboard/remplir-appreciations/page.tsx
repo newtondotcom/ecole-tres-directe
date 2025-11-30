@@ -460,8 +460,7 @@ export default function RemplirAppreciations() {
                                       const results =
                                         await generateBatchAppreciations({
                                           prompt: promptInstruction,
-                                          userAppreciations: userAppreciations || undefined,
-                                          limit: 30
+                                          userAppreciations: userAppreciations || undefined
                                         });
                                       setBatchResults(results);
                                       setBatchError(null);

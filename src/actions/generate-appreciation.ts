@@ -22,13 +22,11 @@ import { useAuthStore } from "@/store/auth";
 type GenerateBatchParams = {
   prompt: string;
   userAppreciations?: string;
-  limit?: number;
 };
 
 export async function generateBatchAppreciations({
   prompt,
-  userAppreciations,
-  limit = 30
+  userAppreciations
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
   try {
     const authStore = useAuthStore.getState();
@@ -67,10 +65,9 @@ export async function generateBatchAppreciations({
       throw error;
     }
 
-    const selectedStudents = council.students.slice(0, limit);
     const results: GeneratedAppreciation[] = [];
 
-    for (const student of selectedStudents) {
+    for (const student of council.students) {
       try {
         const recap = await buildStudentRecap(session, student);
         const appreciation = await generateGeneralAppreciation({
