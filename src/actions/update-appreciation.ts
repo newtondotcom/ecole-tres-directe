@@ -59,10 +59,11 @@ export async function updateStudentAppreciation({
       throw error;
     }
 
-    // Find the specific student
-    const student = council.students.find((s) => s.id === studentId);
+    // Find the specific student and their index
+    const studentIndex = council.students.findIndex((s) => s.id === studentId);
+    const student = council.students[studentIndex];
 
-    if (!student) {
+    if (!student || studentIndex === -1) {
       const error = new Error(
         `Élève avec l'ID ${studentId} introuvable dans cette classe.`
       );
@@ -73,6 +74,10 @@ export async function updateStudentAppreciation({
       throw error;
     }
 
+    // Calculate isFirst and isLast based on student position
+    const isFirst = studentIndex === 0;
+    const isLast = studentIndex === council.students.length - 1;
+
     // Build the update payload
     const payload: TeacherClassCouncilStudentUpdatePayload = {
       student: {
@@ -81,7 +86,9 @@ export async function updateStudentAppreciation({
           ...student.appreciationPrincipalTeacher,
           text: appreciationText.trim(),
           date: new Date()
-        }
+        },
+        isFirst,
+        isLast,
       },
       classAppreciation: council.classAppreciation
         ? {
