@@ -22,11 +22,13 @@ import { useAuthStore } from "@/store/auth";
 type GenerateBatchParams = {
   prompt: string;
   userAppreciations?: string;
+  onProgress?: (result: GeneratedAppreciation) => void;
 };
 
 export async function generateBatchAppreciations({
   prompt,
-  userAppreciations
+  userAppreciations,
+  onProgress
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
   try {
     const authStore = useAuthStore.getState();
@@ -88,11 +90,17 @@ export async function generateBatchAppreciations({
           appreciationText: appreciation
         });
 
-        results.push({
+        const result: GeneratedAppreciation = {
           studentId: recap.studentId,
           studentName: recap.studentName,
           appreciation
-        });
+        };
+        results.push(result);
+        
+        // Notify progress callback if provided
+        if (onProgress) {
+          onProgress(result);
+        }
       } catch (error) {
         Sentry.captureException(error, {
           tags: { function: "generateBatchAppreciations", step: "student_processing" },

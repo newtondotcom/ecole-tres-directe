@@ -106,7 +106,7 @@ export async function updateStudentAppreciation({
       periodCode,
       payload
     );
-
+    
     return {
       success: true,
       result

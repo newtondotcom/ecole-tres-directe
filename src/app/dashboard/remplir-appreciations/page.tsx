@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 
@@ -90,6 +90,17 @@ export default function RemplirAppreciations() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const hasRecap = Boolean(firstStudentRecap);
   const isAuthenticated = authStore.isAuthenticated();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new results are added
+  useEffect(() => {
+    if (batchResults && batchResults.length > 0 && scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-slot="scroll-area-viewport"]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
+    }
+  }, [batchResults]);
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
@@ -431,8 +442,8 @@ export default function RemplirAppreciations() {
                             disabled={isBatching}
                           >
                             {isBatching
-                              ? "Génération de tous les élèves..."
-                              : "Générer pour tous les élèves"}
+                              ? "Génération et remplissage de tous les élèves..."
+                              : "Générer et remplir pour tous les élèves"}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -441,11 +452,9 @@ export default function RemplirAppreciations() {
                               Confirmer la génération en lot
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Cette action va relancer toutes les requêtes pour
-                              récupérer les élèves et générer une appréciation
-                              pour chacun. Cela peut prendre
-                              quelques minutes et consommer des crédits API
-                              supplémentaires. Voulez-vous continuer ?
+                              Cette action va générer une appréciation
+                              pour chacun et remplir son appréciatio dans Ecole Directe. Cela peut prendre
+                              quelques minutes, voulez-vous continuer ?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -457,13 +466,28 @@ export default function RemplirAppreciations() {
                                 onClick={() => {
                                   startBatchGeneration(async () => {
                                     try {
+                                      // Reset results at the start
+                                      setBatchResults([]);
+                                      setBatchError(null);
+                                      
                                       const results =
                                         await generateBatchAppreciations({
                                           prompt: promptInstruction,
-                                          userAppreciations: userAppreciations || undefined
+                                          userAppreciations: userAppreciations || undefined,
+                                          onProgress: (result) => {
+                                            // Add each result as it's generated
+                                            setBatchResults((prev) => {
+                                              if (!prev) return [result];
+                                              // Avoid duplicates
+                                              if (prev.some(r => r.studentId === result.studentId)) {
+                                                return prev;
+                                              }
+                                              return [...prev, result];
+                                            });
+                                          }
                                         });
+                                      // Final update with all results (in case callback missed any)
                                       setBatchResults(results);
-                                      setBatchError(null);
                                     } catch (error) {
                                       const message =
                                         error instanceof Error
@@ -489,24 +513,39 @@ export default function RemplirAppreciations() {
                     {batchResults && batchResults.length > 0 && (
                       <CardContent>
                         <Label className="mb-2 block">
-                          Appréciations générées pour 30 élèves
+                          Appréciations générées ({batchResults.length}{students ? ` / ${students.length}` : ""} élèves)
+                          {isBatching && (
+                            <span className="ml-2 text-sm font-normal text-neutral-500">
+                              — Génération en cours...
+                            </span>
+                          )}
                         </Label>
-                        <ScrollArea className="max-h-[22rem] rounded-md border border-neutral-100">
+                        <ScrollArea ref={scrollAreaRef} className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
                           <div className="space-y-3 p-3 pr-4">
-                            {batchResults.map((result) => (
-                              <Card key={result.studentId}>
-                                <CardHeader className="p-4 pb-2">
-                                  <CardTitle className="text-base">
-                                    {result.studentName}
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-4 pt-0">
-                                  <p className="text-sm text-neutral-700">
-                                    {result.appreciation}
-                                  </p>
-                                </CardContent>
-                              </Card>
-                            ))}
+                            <AnimatePresence>
+                              {batchResults.map((result) => (
+                                <motion.div
+                                  key={result.studentId}
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                      <CardTitle className="text-base">
+                                        {result.studentName}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-4 pt-0">
+                                      <p className="text-sm text-neutral-700">
+                                        {result.appreciation}
+                                      </p>
+                                    </CardContent>
+                                  </Card>
+                                </motion.div>
+                              ))}
+                            </AnimatePresence>
                           </div>
                         </ScrollArea>
                       </CardContent>
