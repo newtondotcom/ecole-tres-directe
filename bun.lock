@@ -27,7 +27,7 @@
         "motion": "^12.23.24",
         "next": "16.0.3",
         "next-themes": "^0.4.6",
-        "pawdirecte-teacher": "^2.1.4",
+        "pawdirecte-teacher": "^2.1.5",
         "react": "19.2.0",
         "react-day-picker": "^9.11.2",
         "react-dom": "19.2.0",
@@ -1398,7 +1398,7 @@
 
     "path-to-regexp": ["path-to-regexp@6.3.0", "", {}, "sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ=="],
 
-    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.4", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.7" } }, "sha512-YMig79ICit0ER+T+vPEkH/bVipyjcfq+k7s4gwwvq4c+MkpOztwxIEuaRyhyn1vO/ongFkYsV1GOO4bQFUDhxQ=="],
+    "pawdirecte-teacher": ["pawdirecte-teacher@2.1.5", "", { "dependencies": { "@literate.ink/utilities": "1.0.0-11713907881.1", "js-base64": "^3.7.8" } }, "sha512-+x+7pPNHFTNc+XQN6aVCSXeSQOwvpWK7QGe7VxRXUIJxc9uLcAU1EY1tzCU3+PulqwITiWgPcmIY3StjfmBMuA=="],
 
     "pg-int8": ["pg-int8@1.0.1", "", {}, "sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw=="],
 
