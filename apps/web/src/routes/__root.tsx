@@ -1,5 +1,4 @@
-import Header from "@/components/header";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/etd/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { trpc } from "@/utils/trpc";
 import type { QueryClient } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
+import { UnblockListener } from "@/components/etd/unblock-listener";
 
 export interface RouterAppContext {
 	trpc: typeof trpc;
@@ -22,17 +22,17 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				title: "ecole-tres-directe",
+				title: "Ecole Tres Directe",
 			},
 			{
 				name: "description",
-				content: "ecole-tres-directe is a web application",
+				content: "Une web app pour accélérer le travail des professeurs dans Ecole Directe",
 			},
 		],
 		links: [
 			{
 				rel: "icon",
-				href: "/favicon.ico",
+				href: "/etd.svg",
 			},
 		],
 	}),
@@ -49,10 +49,10 @@ function RootComponent() {
 				storageKey="vite-ui-theme"
 			>
 				<div className="grid grid-rows-[auto_1fr] h-svh">
-					<Header />
 					<Outlet />
 				</div>
 				<Toaster richColors />
+				<UnblockListener />
 			</ThemeProvider>
 			<TanStackRouterDevtools position="bottom-left" />
 			<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
