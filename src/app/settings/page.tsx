@@ -1,7 +1,10 @@
+import { ModeToggle } from "@/components/etd/theme-toggle";
+
 export default function SettingsPage() {
   return (
-    <div>
-      <h1>Settings</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">Settings</h1>
+      <ModeToggle />
     </div>
   );
 }
