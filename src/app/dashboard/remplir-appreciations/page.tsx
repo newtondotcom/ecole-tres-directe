@@ -431,8 +431,8 @@ export default function RemplirAppreciations() {
                             disabled={isBatching}
                           >
                             {isBatching
-                              ? "Génération des 30 élèves..."
-                              : "Générer pour 30 élèves"}
+                              ? "Génération de tous les élèves..."
+                              : "Générer pour tous les élèves"}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -443,7 +443,7 @@ export default function RemplirAppreciations() {
                             <AlertDialogDescription>
                               Cette action va relancer toutes les requêtes pour
                               récupérer les élèves et générer une appréciation
-                              pour chacun (jusqu&apos;à 30). Cela peut prendre
+                              pour chacun. Cela peut prendre
                               quelques minutes et consommer des crédits API
                               supplémentaires. Voulez-vous continuer ?
                             </AlertDialogDescription>
