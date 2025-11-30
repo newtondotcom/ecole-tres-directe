@@ -1,6 +1,8 @@
 "use client";
 
+import { getFirefoxExtensionLatestVersion } from "@/app/etd-unblock/utils";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Listens for messages from the ETD Unblock browser extension.
@@ -9,6 +11,23 @@ import { useEffect, useState } from "react";
  */
 export function UnblockListener() {
   const [isInstalled, setIsInstalled] = useState(false);
+
+  async function checkIfLatestVersionIsInstalled(version: string) {
+    const latestVersion = await getFirefoxExtensionLatestVersion();
+    if (version !== latestVersion) {
+      toast.info(`Une nouvelle version de l'extension ETD Unblock est disponible. Veuillez la mettre à jour`,
+        {
+          action: {
+            label: "MàJ",
+            onClick: () => window.open("/etd-unblock", "_self"),
+          },
+        }
+      );
+      return false;
+    }
+    toast.success("L'extension ETD Unblock est à jour.");
+    return true;
+  }
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -24,6 +43,7 @@ export function UnblockListener() {
             detail: event.data?.payload ?? null,
           })
         );
+        checkIfLatestVersionIsInstalled(version);
       }
     };
 

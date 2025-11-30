@@ -11,49 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const FIREFOX_STORE_URL =
-  "https://www.firefox.com/fr/";
-
-  async function getFirefoxUrl() {
-    try {
-      const response = await fetch(
-        "https://raw.githubusercontent.com/newtondotcom/Ecole-Tres-Directe-Unblock/refs/heads/main/updates.json"
-      );
-      const data = await response.json();
-      const updates =
-        data.addons["{etdu-firefox-self-host@ecole-tres-directe.vercel.app}"].updates;
-      return updates[updates.length - 1].update_link;
-    } catch (error) {
-      console.error("Failed to fetch Firefox URL:", error);
-      return undefined;
-    }
-  }
-
-function getBrowser(): string {
-  if (typeof window === "undefined") return "Unknown";
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  if (userAgent.includes("firefox")) return "Firefox";
-  if (userAgent.includes("edg")) return "Edge";
-  if (userAgent.includes("chrome") && !userAgent.includes("edg"))
-    return "Chrome";
-  if (userAgent.includes("safari") && !userAgent.includes("chrome"))
-    return "Safari";
-  if (userAgent.includes("opera")) return "Opera";
-  return "Unknown";
-}
-
-function getOS(): string {
-  if (typeof window === "undefined") return "Unknown";
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  if (userAgent.includes("iphone") || userAgent.includes("ipad"))
-    return "iOS";
-  if (userAgent.includes("android")) return "Android";
-  if (userAgent.includes("mac")) return "MacOS";
-  if (userAgent.includes("win")) return "Windows";
-  if (userAgent.includes("linux")) return "Linux";
-  return "Unknown";
-}
+import { FIREFOX_STORE_URL, getBrowser, getFirefoxExtensionLatestUpdateLink, getOS } from "@/app/etd-unblock/utils";
 
 export default function EtdUnblock({
   isEtdUnblockActuallyInstalled = false,
@@ -148,7 +106,7 @@ export default function EtdUnblock({
 
   useEffect(() => {
     if (userBrowser === "Firefox") {
-      getFirefoxUrl().then((firefoxUrl) => {
+      getFirefoxExtensionLatestUpdateLink().then((firefoxUrl) => {
         if (firefoxUrl) {
           setUrl(firefoxUrl);
         } else {
