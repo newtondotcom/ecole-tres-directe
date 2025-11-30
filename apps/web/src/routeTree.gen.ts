@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EtdUnblockRouteImport } from './routes/etd-unblock'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
+import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -23,38 +27,94 @@ const EtdUnblockRoute = EtdUnblockRouteImport.update({
   path: '/etd-unblock',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardRemplirAppreciationsRoute =
+  DashboardRemplirAppreciationsRouteImport.update({
+    id: '/remplir-appreciations',
+    path: '/remplir-appreciations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardFeedbackRoute = DashboardFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/etd-unblock' | '/login'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/etd-unblock'
+    | '/login'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/etd-unblock' | '/login'
-  id: '__root__' | '/' | '/etd-unblock' | '/login'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/etd-unblock'
+    | '/login'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/etd-unblock'
+    | '/login'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   EtdUnblockRoute: typeof EtdUnblockRoute
   LoginRoute: typeof LoginRoute
 }
@@ -75,6 +135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EtdUnblockRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -82,11 +149,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/remplir-appreciations': {
+      id: '/dashboard/remplir-appreciations'
+      path: '/remplir-appreciations'
+      fullPath: '/dashboard/remplir-appreciations'
+      preLoaderRoute: typeof DashboardRemplirAppreciationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/feedback': {
+      id: '/dashboard/feedback'
+      path: '/feedback'
+      fullPath: '/dashboard/feedback'
+      preLoaderRoute: typeof DashboardFeedbackRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
+interface DashboardRouteRouteChildren {
+  DashboardFeedbackRoute: typeof DashboardFeedbackRoute
+  DashboardRemplirAppreciationsRoute: typeof DashboardRemplirAppreciationsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardFeedbackRoute: DashboardFeedbackRoute,
+  DashboardRemplirAppreciationsRoute: DashboardRemplirAppreciationsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
   EtdUnblockRoute: EtdUnblockRoute,
   LoginRoute: LoginRoute,
 }

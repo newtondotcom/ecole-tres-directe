@@ -6,7 +6,7 @@ import {
   type TeacherClassCouncilStudentUpdatePayload
 } from "pawdirecte-teacher";
 
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/stores/auth";
 
 type UpdateStudentAppreciationParams = {
   studentId: number;

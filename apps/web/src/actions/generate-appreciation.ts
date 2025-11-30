@@ -14,8 +14,8 @@ import {
   findFirstPrincipalClass
 } from "@/actions/appreciations";
 import type { GeneratedAppreciation } from "@/types/appreciations";
-import { generateGeneralAppreciation } from "@/actions/mistral";
 import { useAuthStore } from "@/stores/auth";
+import { trpcClient } from "@/utils/trpc";
 
 
 type GenerateBatchParams = {
@@ -64,7 +64,7 @@ export async function generateBatchAppreciations({
     for (const student of council.students) {
       try {
         const recap = await buildStudentRecap(session, student);
-        const appreciation = await generateGeneralAppreciation({
+        const appreciation = await trpcClient.mistral.generateAppreciation.mutate({
           prompt,
           subjects: recap.subjects,
           studentFirstName: student.firstName,
