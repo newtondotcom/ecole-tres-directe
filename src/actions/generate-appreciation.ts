@@ -140,6 +140,9 @@ async function uploadGeneratedAppreciation({
   appreciationText
 }: UploadGeneratedAppreciationParams) {
   try {
+    const studentIndex = council.students.findIndex((s) => s.id === student.id);
+    const isFirst = studentIndex === 0;
+    const isLast = studentIndex === council.students.length - 1;
     const payload: TeacherClassCouncilStudentUpdatePayload = {
       student: {
         ...student,
@@ -147,7 +150,9 @@ async function uploadGeneratedAppreciation({
           ...student.appreciationPrincipalTeacher,
           text: appreciationText.trim(),
           date: new Date()
-        }
+        },
+        isFirst: isFirst,
+        isLast: isLast,
       },
       classAppreciation: council.classAppreciation
         ? { ...council.classAppreciation, date: new Date() }
