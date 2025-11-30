@@ -8,6 +8,7 @@ import { type Account, type Session } from "pawdirecte-teacher";
 import type { Credentials } from "@/types/appreciations";
 import { loginUsingCredentials, validateSession } from "@/lib/pawdirecte";
 import { toast } from "sonner";
+import { checkPatreonSubscription } from "@/actions/check-patreon";
 
 type AuthState = {
   credentials?: Credentials;
@@ -16,6 +17,7 @@ type AuthState = {
   rememberMe: boolean;
   isLoading: boolean;
   error?: string;
+  isPatreonSubscribed?: boolean;
 };
 
 type AuthActions = {
@@ -34,7 +36,8 @@ const initialState: AuthState = {
   account: undefined,
   rememberMe: false,
   isLoading: false,
-  error: undefined
+  error: undefined,
+  isPatreonSubscribed: undefined,
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -52,13 +55,38 @@ export const useAuthStore = create<AuthStore>()(
             username,
             password
           );
+
+          // Check Patreon subscription (non-blocking - allow login even if check fails)
+          let isPatreonSubscribed = false;
+          try {
+            const result = await checkPatreonSubscription({
+              accountId: account.id,
+              firstName: account.firstName,
+              lastName: account.lastName,
+              schoolName: account.schoolName,
+              username: session?.username,
+            });
+            isPatreonSubscribed = result.subscribed;
+            
+            if (!isPatreonSubscribed) {
+              toast.error("Vous n'êtes pas abonné à Patreon. Merci de vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.");
+            }
+          } catch (patreonError) {
+            // Log error but don't block authentication
+            Sentry.captureException(patreonError, {
+              tags: { function: "checkPatreon", store: "auth", step: "authenticate" },
+            });
+            // Continue with login even if Patreon check fails
+          }
+          
           set({
             credentials: rememberMe ? { username, password } : { username, password: "" },
             session,
             account,
             rememberMe,
             isLoading: false,
-            error: undefined
+            error: undefined,
+            isPatreonSubscribed,
           });
         } catch (error) {
           const message =
@@ -89,11 +117,43 @@ export const useAuthStore = create<AuthStore>()(
             state.session!,
             password
           );
+
+          // Check Patreon subscription (non-blocking - allow login even if check fails)
+          let isPatreonSubscribed = false;
+          try {
+            const result = await checkPatreonSubscription({
+              accountId: account.id,
+              firstName: account.firstName,
+              lastName: account.lastName,
+              schoolName: account.schoolName,
+              username: session?.username,
+            });
+            isPatreonSubscribed = result.subscribed;
+            
+            if (!isPatreonSubscribed) {
+              toast.error("Vous n'êtes pas abonné à Patreon. Vous pouvez vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.", {
+                action: {
+                  label: "S'abonner",
+                  onClick: () => {
+                    window.open("https://www.patreon.com/ecoletresdirecte", "_blank");
+                  },
+                },
+              });
+            }
+          } catch (patreonError) {
+            // Log error but don't block authentication
+            Sentry.captureException(patreonError, {
+              tags: { function: "checkPatreon", store: "auth", step: "validatePersistedSession" },
+            });
+            // Continue with login even if Patreon check fails
+          }
+
           set({
             session,
             account,
             isLoading: false,
-            error: undefined
+            error: undefined,
+            isPatreonSubscribed,
           });
         } catch (error) {
           const message =
@@ -106,7 +166,8 @@ export const useAuthStore = create<AuthStore>()(
           toast.error(message);
           set({
             ...initialState,
-            error: message
+            error: message,
+            isLoading: false,
           });
           throw error;
         }
@@ -130,7 +191,8 @@ export const useAuthStore = create<AuthStore>()(
         credentials: state.rememberMe 
           ? { username: state.credentials?.username ?? "", password: "" } 
           : undefined,
-        rememberMe: state.rememberMe
+        rememberMe: state.rememberMe,
+        isPatreonSubscribed: state.isPatreonSubscribed
       })
     }
   )

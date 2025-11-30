@@ -25,9 +25,12 @@ import {
   MessageSquare, 
   Settings,
   LogOut,
-  Toilet
+  Toilet,
+  CheckCircle2,
+  XCircle
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
@@ -38,17 +41,17 @@ const menuItems = [
   {
     title: "Remplir les appréciations",
     icon: FileText,
-    url: "/remplir-appreciations",
+    url: "/dashboard/remplir-appreciations",
   },
   {
     title: "Feedback",
     icon: MessageSquare,
-    url: "/feedback",
+    url: "/dashboard/feedback",
   },
   {
     title: "Paramètres",
     icon: Settings,
-    url: "/settings",
+    url: "/dashboard/settings",
   },
 ];
 
@@ -57,7 +60,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { account, resetAuthData, isAuthenticated, isLoading } = useAuthStore();
+  const { account, resetAuthData, isAuthenticated, isLoading, isPatreonSubscribed } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -94,8 +97,10 @@ export default function DashboardLayout({
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Toilet className="h-4 w-4" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">Ecole Tres Directe</span>
+            <div className="flex flex-col flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold">Ecole Tres Directe</span>
+              </div>
               {account && (
                 <span className="text-xs text-muted-foreground">
                   {account.firstName} {account.lastName}
@@ -132,6 +137,25 @@ export default function DashboardLayout({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
+              
+                {isPatreonSubscribed !== undefined && (
+                    <SidebarMenuButton asChild>
+                        <Link href="https://www.patreon.com/ecoletresdirecte" target="_blank">
+                      <div className="flex items-center cursor-pointer">
+                        {isPatreonSubscribed ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
+                        <span className={cn("text-xs font-bold ml-2" , isPatreonSubscribed ? "text-green-500" : "text-red-500")}>
+                          {isPatreonSubscribed
+                            ? "Abonné au Patreon, merci !"
+                            : "Pas abonné au Patreon..."}
+                        </span>
+                      </div>
+                      </Link>
+                  </SidebarMenuButton>
+                )}
               <SidebarMenuButton onClick={handleLogout}>
                 <LogOut />
                 <span>Déconnexion</span>
