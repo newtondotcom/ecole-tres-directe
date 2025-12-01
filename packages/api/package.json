@@ -1,29 +1,34 @@
 {
-  "name": "@ecole-tres-directe/api",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "type": "module",
-  "scripts": {
-    "build": "tsc -b",
-    "check-types": "tsc -b"
-  },
-  "devDependencies": {
-    "@ecole-tres-directe/config": "workspace:*"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@trpc/server": "catalog:",
-    "@trpc/client": "catalog:",
-    "hono": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "^4.1.11"
-  }
+	"name": "@ecole-tres-directe/api",
+	"type": "module",
+	"main": "./dist/src/index.js",
+	"types": "./dist/src/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/src/index.d.ts",
+			"import": "./dist/src/index.js"
+		},
+		"./*": {
+			"types": "./dist/src/*.d.ts",
+			"import": "./dist/src/*.js"
+		}
+	},
+	"files": ["dist"],
+	"scripts": {
+		"build": "tsc -b",
+		"check-types": "tsc -b"
+	},
+	"devDependencies": {
+		"@ecole-tres-directe/config": "workspace:*"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@trpc/server": "catalog:",
+		"@trpc/client": "catalog:",
+		"hono": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "^4.1.11"
+	}
 }
