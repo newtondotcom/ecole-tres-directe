@@ -2,14 +2,19 @@
   "name": "@ecole-tres-directe/api",
   "exports": {
     ".": {
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./*": {
-      "default": "./src/*.ts"
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
     }
   },
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc -b",
+    "check-types": "tsc -b"
+  },
   "devDependencies": {
     "@ecole-tres-directe/config": "workspace:*"
   },
