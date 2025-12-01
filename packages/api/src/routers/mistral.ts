@@ -21,6 +21,15 @@ Un beau premier trimestre.La maîtrise des connaissances et des compétences est
 
 const DEFAULT_PROMPT = "Rédige une appréciation globale encourageante et précise, avec un ton neutre et un vocabulaire accessible.";
 
+// Narrow typing for fetch responses so we don't depend on the global `Response`
+// type, which can differ between environments (e.g. local vs Vercel build).
+type FetchResponse = {
+	ok: boolean;
+	status: number;
+	text(): Promise<string>;
+	json(): Promise<unknown>;
+};
+
 const subjectAppreciationSchema = z.object({
 	subjectName: z.string(),
 	teachers: z.string(),
@@ -223,7 +232,7 @@ export const mistralRouter = router({
 				}
 			];
 
-			const response = await fetch(MISTRAL_API_URL, {
+			const response = (await fetch(MISTRAL_API_URL, {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${apiKey}`,
@@ -235,7 +244,7 @@ export const mistralRouter = router({
 					temperature: 0.4,
 					max_tokens: 300
 				})
-			});
+			})) as FetchResponse;
 
 			if (!response.ok) {
 				const details = await response.text();
