@@ -31,7 +31,7 @@ export async function loginUsingCredentials(
 
     return { session, account };
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -39,30 +39,26 @@ export async function validateSession(
   session: Session,
   password: string
 ) {
-  try {
-    console.info("Validating session with password...");
-    
-    const accounts = await login(session, password).catch(async (error) => {
-      if (error instanceof DoubleAuthRequired) {
-        console.error("Double authentication required.");
-      }
-      throw error;
-    });
-
-    const account = accounts[0];
-    setAccessToken(session, account);
-    console.log(
-      "Session validated for",
-      account.firstName,
-      account.lastName,
-      "from",
-      account.schoolName
-    );
-
-    return { session, account };
-  } catch (error) {
+  console.info("Validating session with password...");
+  
+  const accounts = await login(session, password).catch(async (error) => {
+    if (error instanceof DoubleAuthRequired) {
+      console.error("Double authentication required.");
+    }
     throw error;
-  }
+  });
+
+  const account = accounts[0];
+  setAccessToken(session, account);
+  console.log(
+    "Session validated for",
+    account.firstName,
+    account.lastName,
+    "from",
+    account.schoolName
+  );
+
+  return { session, account };
 }
 
 export async function fullProcedure() {

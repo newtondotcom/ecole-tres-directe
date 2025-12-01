@@ -21,8 +21,7 @@ export async function updateStudentAppreciation({
   periodCode,
   appreciationText
 }: UpdateStudentAppreciationParams) {
-  try {
-    const authStore = useAuthStore.getState();
+  const authStore = useAuthStore.getState();
 
     if (
       !authStore.session ||
@@ -35,71 +34,68 @@ export async function updateStudentAppreciation({
       throw error;
     }
 
-    const session = authStore.session;
-    const accountId = authStore.account.id;
+  const session = authStore.session;
+  const accountId = authStore.account.id;
 
-    // Fetch the council to get current student data
-    const council = await teacherClassCouncil(
-      session,
-      accountId,
-      classId,
-      periodCode
-    );
+  // Fetch the council to get current student data
+  const council = await teacherClassCouncil(
+    session,
+    accountId,
+    classId,
+    periodCode
+  );
 
-    if (!council.students.length) {
-      const error = new Error("Aucun élève trouvé dans cette classe.");
-      throw error;
-    }
-
-    // Find the specific student and their index
-    const studentIndex = council.students.findIndex((s) => s.id === studentId);
-    const student = council.students[studentIndex];
-
-    if (!student || studentIndex === -1) {
-      const error = new Error(
-        `Élève avec l'ID ${studentId} introuvable dans cette classe.`
-      );
-      throw error;
-    }
-
-    // Calculate isFirst and isLast based on student position
-    const isFirst = studentIndex === 0;
-    const isLast = studentIndex === council.students.length - 1;
-
-    // Build the update payload
-    const payload: TeacherClassCouncilStudentUpdatePayload = {
-      student: {
-        ...student,
-        appreciationPrincipalTeacher: {
-          ...student.appreciationPrincipalTeacher,
-          text: appreciationText.trim(),
-          date: new Date()
-        },
-        isFirst,
-        isLast,
-      },
-      classAppreciation: council.classAppreciation
-        ? {
-            ...council.classAppreciation,
-            date: new Date()
-          }
-        : undefined
-    };
-
-    // Update the student's appreciation
-    const result = await updateTeacherClassCouncilStudent(
-      session,
-      accountId,
-      classId,
-      periodCode,
-      payload
-    );
-    
-    return {
-      success: true,
-      result
-    };
-  } catch (error) {
+  if (!council.students.length) {
+    const error = new Error("Aucun élève trouvé dans cette classe.");
     throw error;
   }
+
+  // Find the specific student and their index
+  const studentIndex = council.students.findIndex((s) => s.id === studentId);
+  const student = council.students[studentIndex];
+
+  if (!student || studentIndex === -1) {
+    const error = new Error(
+      `Élève avec l'ID ${studentId} introuvable dans cette classe.`
+    );
+    throw error;
+  }
+
+  // Calculate isFirst and isLast based on student position
+  const isFirst = studentIndex === 0;
+  const isLast = studentIndex === council.students.length - 1;
+
+  // Build the update payload
+  const payload: TeacherClassCouncilStudentUpdatePayload = {
+    student: {
+      ...student,
+      appreciationPrincipalTeacher: {
+        ...student.appreciationPrincipalTeacher,
+        text: appreciationText.trim(),
+        date: new Date()
+      },
+      isFirst,
+      isLast,
+    },
+    classAppreciation: council.classAppreciation
+      ? {
+          ...council.classAppreciation,
+          date: new Date()
+        }
+      : undefined
+  };
+
+  // Update the student's appreciation
+  const result = await updateTeacherClassCouncilStudent(
+    session,
+    accountId,
+    classId,
+    periodCode,
+    payload
+  );
+  
+  return {
+    success: true,
+    result
+  };
 }

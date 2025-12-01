@@ -43,72 +43,64 @@ export async function fetchAppreciationsData({
   session,
   account
 }: FetchAppreciationsParams): Promise<AppreciationsServerResult> {
-  try {
-    const classSummary = await findFirstPrincipalClass(session, account.id);
+  const classSummary = await findFirstPrincipalClass(session, account.id);
 
-    const council = await teacherClassCouncil(
-      session,
-      account.id,
-      classSummary.classId,
-      classSummary.periodCode
-    );
+  const council = await teacherClassCouncil(
+    session,
+    account.id,
+    classSummary.classId,
+    classSummary.periodCode
+  );
 
-    if (!council.students.length) {
-      const error = new Error("Aucun élève trouvé pour cette classe.");
-      throw error;
-    }
-
-    const students: StudentSummary[] = council.students.map((student) => ({
-      id: student.id,
-      firstName: student.firstName,
-      lastName: student.lastName
-    }));
-
-    const firstStudentRecap = await buildStudentRecap(session, council.students[0]);
-
-    return {
-      classSummary,
-      students,
-      firstStudentRecap,
-      session,
-      account
-    };
-  } catch (error) {
+  if (!council.students.length) {
+    const error = new Error("Aucun élève trouvé pour cette classe.");
     throw error;
   }
+
+  const students: StudentSummary[] = council.students.map((student) => ({
+    id: student.id,
+    firstName: student.firstName,
+    lastName: student.lastName
+  }));
+
+  const firstStudentRecap = await buildStudentRecap(session, council.students[0]);
+
+  return {
+    classSummary,
+    students,
+    firstStudentRecap,
+    session,
+    account
+  };
 }
 
 export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number
 ): Promise<PrincipalClassSummary> {
-  try {
-    const levels = await teacherLevelsList(session, teacherId);
+  const levels = await teacherLevelsList(session, teacherId);
 
-    for (const school of levels.schools) {
-      for (const level of school.levels) {
-        for (const classItem of level.classes) {
-          if (!classItem.isCurrentUserPrincipal) continue;
-          const period = classItem.periods[0];
-          if (!period) continue;
-          return {
-            schoolName: school.label,
-            levelName: level.label,
-            classId: classItem.id,
-            classLabel: classItem.label,
-            periodCode: period.code
-          };
-        }
+  for (const school of levels.schools) {
+    for (const level of school.levels) {
+      for (const classItem of level.classes) {
+        if (!classItem.isCurrentUserPrincipal) continue;
+        const period = classItem.periods[0];
+        if (!period) continue;
+        return {
+          schoolName: school.label,
+          levelName: level.label,
+          classId: classItem.id,
+          classLabel: classItem.label,
+          periodCode: period.code
+        };
       }
     }
-
-    const error = new Error(
-      "Impossible de trouver une classe où vous êtes professeur principal."
-    );
-    throw error;
-  } catch (error) {
-    throw error;
   }
+
+  const error = new Error(
+    "Impossible de trouver une classe où vous êtes professeur principal."
+  );
+  throw error;
 }
 
 export async function buildStudentRecap(
@@ -139,7 +131,7 @@ export async function buildStudentRecap(
       subjects: formattedSubjects
     };
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 

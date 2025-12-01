@@ -29,80 +29,77 @@ export async function generateBatchAppreciations({
   userAppreciations,
   onProgress
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
-  try {
-    const authStore = useAuthStore.getState();
+  const authStore = useAuthStore.getState();
 
-    if (
-      !authStore.session ||
-      !authStore.account ||
-      !authStore.credentials
-    ) {
-      const error = new Error(
-        "Aucune session active. Veuillez vous connecter depuis la page de connexion."
-      );
-      throw error;
-    }
-
-    const session = authStore.session;
-    const account = authStore.account;
-
-    const classSummary = await findFirstPrincipalClass(session, account.id);
-    const council = await teacherClassCouncil(
-      session,
-      account.id,
-      classSummary.classId,
-      classSummary.periodCode
+  if (
+    !authStore.session ||
+    !authStore.account ||
+    !authStore.credentials
+  ) {
+    const error = new Error(
+      "Aucune session active. Veuillez vous connecter depuis la page de connexion."
     );
-
-    if (!council.students.length) {
-      const error = new Error("Aucun élève trouvé pour cette classe.");
-      throw error;
-    }
-
-    const results: GeneratedAppreciation[] = [];
-
-    for (const student of council.students) {
-      try {
-        const recap = await buildStudentRecap(session, student);
-        const appreciation = await trpcClient.mistral.generateAppreciation.mutate({
-          prompt,
-          subjects: recap.subjects,
-          studentFirstName: student.firstName,
-          studentGender: student.gender,
-          userAppreciations: userAppreciations || undefined
-        });
-
-        await uploadGeneratedAppreciation({
-          session,
-          teacherId: account.id,
-          classId: classSummary.classId,
-          periodCode: classSummary.periodCode,
-          council,
-          student,
-          appreciationText: appreciation
-        });
-
-        const result: GeneratedAppreciation = {
-          studentId: recap.studentId,
-          studentName: recap.studentName,
-          appreciation
-        };
-        results.push(result);
-        
-        // Notify progress callback if provided
-        if (onProgress) {
-          onProgress(result);
-        }
-      } catch (error) {
-        // Continue with next student instead of failing entire batch
-        continue;
-      }
-    }
-
-    return results;
-  } catch (error) {
     throw error;
   }
+
+  const session = authStore.session;
+  const account = authStore.account;
+
+  const classSummary = await findFirstPrincipalClass(session, account.id);
+  const council = await teacherClassCouncil(
+    session,
+    account.id,
+    classSummary.classId,
+    classSummary.periodCode
+  );
+
+  if (!council.students.length) {
+    const error = new Error("Aucun élève trouvé pour cette classe.");
+    throw error;
+  }
+
+  const results: GeneratedAppreciation[] = [];
+
+  for (const student of council.students) {
+    try {
+      const recap = await buildStudentRecap(session, student);
+      const appreciation = await trpcClient.mistral.generateAppreciation.mutate({
+        prompt,
+        subjects: recap.subjects,
+        studentFirstName: student.firstName,
+        studentGender: student.gender,
+        userAppreciations: userAppreciations || undefined
+      });
+
+      await uploadGeneratedAppreciation({
+        session,
+        teacherId: account.id,
+        classId: classSummary.classId,
+        periodCode: classSummary.periodCode,
+        council,
+        student,
+        appreciationText: appreciation
+      });
+
+      const result: GeneratedAppreciation = {
+        studentId: recap.studentId,
+        studentName: recap.studentName,
+        appreciation
+      };
+      results.push(result);
+      
+      // Notify progress callback if provided
+      if (onProgress) {
+        onProgress(result);
+      }
+    } catch (error) {
+      console.error(error);
+      // Continue with next student instead of failing entire batch
+      continue;
+    }
+  }
+
+  return results;
 }
 
 type UploadGeneratedAppreciationParams = {
@@ -152,7 +149,7 @@ async function uploadGeneratedAppreciation({
       payload
     );
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 

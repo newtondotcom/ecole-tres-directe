@@ -50,7 +50,7 @@ const initialState: AppreciationsStoreState = {
   account: undefined
 };
 
-export const useAppreciationsStore = create<AppreciationsStore>((set, get) => ({
+export const useAppreciationsStore = create<AppreciationsStore>((set) => ({
   ...initialState,
   getAppreciationsData: async () => {
     set({

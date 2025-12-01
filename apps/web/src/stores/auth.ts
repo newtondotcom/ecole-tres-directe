@@ -68,9 +68,10 @@ export const useAuthStore = create<AuthStore>()(
             if (!isPatreonSubscribed) {
               toast.error("Vous n'êtes pas abonné à Patreon. Merci de vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.");
             }
-          } catch (patreonError) {
+          } catch (_patreonError) {
             // Log error but don't block authentication
             // Error silently ignored - continue with login even if Patreon check fails
+            console.error(_patreonError);
           }
           
           set({
@@ -130,9 +131,10 @@ export const useAuthStore = create<AuthStore>()(
                 },
               });
             }
-          } catch (patreonError) {
+          } catch (_patreonError) {
             // Log error but don't block authentication
             // Error silently ignored - continue with login even if Patreon check fails
+            console.error(_patreonError);
           }
 
           set({

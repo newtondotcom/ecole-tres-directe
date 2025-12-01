@@ -267,13 +267,9 @@ export const mistralRouter = router({
 					"La réponse de Mistral ne contient pas de contenu exploitable."
 				);
 			}
-
-			try {
-				const sanitized = nameTransformer.deanonymize(sanitizeAppreciation(content));
-				return truncateToMaxLength(sanitized, 400);
-			} catch (error) {
-				throw error;
-			}
+			
+			const sanitized = nameTransformer.deanonymize(sanitizeAppreciation(content));
+			return truncateToMaxLength(sanitized, 400);
 		}),
 });
 

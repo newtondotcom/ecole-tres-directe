@@ -33,22 +33,21 @@ export async function sendDiscordMessage({
   avatar_url,
   embeds,
 }: SendDiscordMessageParams) {
-  try {
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-    if (!webhookUrl) {
-      const error = new Error(
-        "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement."
-      );
-      throw error;
-    }
+  if (!webhookUrl) {
+    const error = new Error(
+      "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement."
+    );
+    throw error;
+  }
 
-    if (!content && !embeds?.length) {
-      const error = new Error(
-        "Le message doit contenir au moins un contenu ou un embed."
-      );
-      throw error;
-    }
+  if (!content && !embeds?.length) {
+    const error = new Error(
+      "Le message doit contenir au moins un contenu ou un embed."
+    );
+    throw error;
+  }
 
   const payload: DiscordWebhookMessage = {};
 
@@ -68,36 +67,33 @@ export async function sendDiscordMessage({
     payload.embeds = embeds;
   }
 
-    try {
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        const error = new Error(
-          `Échec de l'envoi du message Discord (${response.status}): ${errorText}`
-        );
-        throw error;
-      }
-
-      return {
-        success: true,
-        message: "Message envoyé avec succès à Discord.",
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Erreur lors de l'envoi à Discord: ${error.message}`);
-      }
-      const unknownError = new Error("Erreur inconnue lors de l'envoi à Discord.");
-      throw unknownError;
+    if (!response.ok) {
+      const errorText = await response.text();
+      const error = new Error(
+        `Échec de l'envoi du message Discord (${response.status}): ${errorText}`
+      );
+      throw error;
     }
+
+    return {
+      success: true,
+      message: "Message envoyé avec succès à Discord.",
+    };
   } catch (error) {
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(`Erreur lors de l'envoi à Discord: ${error.message}`);
+    }
+    const unknownError = new Error("Erreur inconnue lors de l'envoi à Discord.");
+    throw unknownError;
   }
 }
 
