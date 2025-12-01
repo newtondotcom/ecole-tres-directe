@@ -25,6 +25,11 @@
 		"dev": {
 			"cache": false,
 			"persistent": true
+		},
+		"compile": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", ".env*"],
+			"outputs": ["server"]
 		}
 	}
 }
