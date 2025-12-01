@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { trpcServer } from "@hono/trpc-server";
-import { createContext } from "@ecole-tres-directe/api/context";
-import { appRouter } from "@ecole-tres-directe/api/routers/index";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { appRouter } from "@ecole-tres-directe/api/src/routers/index";
+import { createContext } from "@ecole-tres-directe/api/src/context";
 
 const app = new Hono();
 
