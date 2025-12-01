@@ -5,7 +5,16 @@
 		"build": {
 			"dependsOn": ["^build"],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["dist/**"]
+			"outputs": ["dist/**"],
+			"env": [
+				"BETTER_AUTH_SECRET",
+				"BETTER_AUTH_URL",
+				"CORS_ORIGIN",
+				"MISTRAL_API_KEY",
+				"DISCORD_WEBHOOK_URL",
+				"VITE_SERVER_URL",
+				"TURBO_TELEMETRY_DISABLED"			
+			]
 		},
 		"lint": {
 			"dependsOn": ["^lint"]
