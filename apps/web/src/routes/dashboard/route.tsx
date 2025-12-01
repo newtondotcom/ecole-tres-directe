@@ -30,6 +30,7 @@ import {
 import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
 import { Link, useRouter, Outlet, createFileRoute } from "@tanstack/react-router";
+import { PATREON_URL } from "@/lib/patreon";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardLayout,
@@ -154,7 +155,7 @@ export default function DashboardLayout() {
             <SidebarMenuItem>
               {isPatreonSubscribed !== undefined && (
                 <SidebarMenuButton asChild>
-                  <Link to="https://www.patreon.com/ecoletresdirecte" target="_blank">
+                  <Link to={PATREON_URL} target="_blank">
                     <div className="flex items-center cursor-pointer">
                       {isPatreonSubscribed ? (
                         <CheckCircle2 className="h-4 w-4 text-green-500" />
