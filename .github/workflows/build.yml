@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ secrets.DOCKER_IMAGE }}:${{ secrets.DOCKER_TAG }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:${{ secrets.DOCKER_TAG }}
           platforms: linux/arm64/v8
           file: apps/server/Containerfile
           context: .
