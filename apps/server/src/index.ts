@@ -8,6 +8,8 @@ import { createContext } from "@ecole-tres-directe/api/context";
 
 const app = new Hono();
 
+console.log(process.env.CORS_ORIGIN);
+
 app.use(logger());
 app.use(
 	"/*",
