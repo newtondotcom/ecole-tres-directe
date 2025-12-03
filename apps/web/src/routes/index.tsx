@@ -22,7 +22,7 @@ function HomeComponent() {
 				className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
 			>
 				<span>Tester</span>
-				<img src="/etd.svg" alt="Ecole Tres Directe" width={20} height={20} />
+				<img src="/etd.svg" alt="Ecole Tres Directe" width={20} height={20} className="dark:invert" />
 			</HoverBorderGradient>
 			</Link>
 			<ShootingStars />
