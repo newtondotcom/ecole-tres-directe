@@ -113,7 +113,7 @@ function RemplirAppreciationsComponent() {
       <header className="mb-8">
         <h1 className="text-3xl font-semibold">Remplir les appréciations</h1>
         <p className="mt-2 text-sm text-neutral-500">
-          Après vous être connecté depuis la page dédiée, récupérez votre classe
+          Récupérez votre classe
           principale et générez vos appréciations en quelques clics.
         </p>
       </header>
@@ -129,10 +129,6 @@ function RemplirAppreciationsComponent() {
               <Card>
                 <CardHeader>
                   <CardTitle>Récupération des données</CardTitle>
-                  <CardDescription>
-                    Lancez la synchronisation de vos classes et de vos élèves.
-                    L’authentification se fait depuis la page de connexion.
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {isAuthenticated ? (
@@ -190,7 +186,7 @@ function RemplirAppreciationsComponent() {
                 <CardHeader>
                   <CardTitle>Étapes</CardTitle>
                   <CardDescription>
-                    Suivez la progression des requêtes côté serveur.
+                    Suivez la progression des requêtes côté serveur
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
