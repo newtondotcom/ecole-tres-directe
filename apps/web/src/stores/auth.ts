@@ -5,7 +5,7 @@ import { type Account, type Session } from "pawdirecte-teacher";
 import type { Credentials } from "@/types/appreciations";
 import { loginUsingCredentials, validateSession } from "@/lib/pawdirecte";
 import { toast } from "sonner";
-import { checkPatreonSubscription } from "@/actions/check-patreon";
+import { trpcClient } from "@/utils/trpc";
 
 type AuthState = {
   credentials?: Credentials;
@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthStore>()(
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
           try {
-            const result = await checkPatreonSubscription({
+            const result = await trpcClient.checkPatreonSubscription.mutate({
               accountId: account.id,
               firstName: account.firstName,
               lastName: account.lastName,
@@ -112,7 +112,7 @@ export const useAuthStore = create<AuthStore>()(
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
           try {
-            const result = await checkPatreonSubscription({
+            const result = await trpcClient.checkPatreonSubscription.mutate({
               accountId: account.id,
               firstName: account.firstName,
               lastName: account.lastName,

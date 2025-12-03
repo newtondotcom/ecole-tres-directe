@@ -1,5 +1,3 @@
-"use server";
-
 type DiscordWebhookMessage = {
   content?: string;
   username?: string;

@@ -1,14 +1,21 @@
-"use server";
+import { sendDiscordMessage } from "./discord-webhook";
+import { z } from "zod";
 
-import { sendDiscordMessage } from "@/actions/discord-webhook";
-
-type CheckPatreonParams = {
+export type CheckPatreonParams = {
   accountId: number;
   firstName: string;
   lastName: string;
   schoolName?: string;
   username?: string;
 };
+
+export const checkPatreonSchema = z.object({
+	accountId: z.number(),
+	firstName: z.string(),
+	lastName: z.string(),
+	schoolName: z.string().optional(),
+	username: z.string().optional(),
+});
 
 export async function checkPatreonSubscription({
   accountId,
