@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PolitiquesRouteImport } from './routes/politiques'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EtdUnblockRouteImport } from './routes/etd-unblock'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
@@ -18,6 +19,11 @@ import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settin
 import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
 import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
 
+const PolitiquesRoute = PolitiquesRouteImport.update({
+  id: '/politiques',
+  path: '/politiques',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/etd-unblock'
     | '/login'
+    | '/politiques'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/etd-unblock'
     | '/login'
+    | '/politiques'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/etd-unblock'
     | '/login'
+    | '/politiques'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -127,10 +139,18 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   EtdUnblockRoute: typeof EtdUnblockRoute
   LoginRoute: typeof LoginRoute
+  PolitiquesRoute: typeof PolitiquesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/politiques': {
+      id: '/politiques'
+      path: '/politiques'
+      fullPath: '/politiques'
+      preLoaderRoute: typeof PolitiquesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -213,6 +233,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   EtdUnblockRoute: EtdUnblockRoute,
   LoginRoute: LoginRoute,
+  PolitiquesRoute: PolitiquesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

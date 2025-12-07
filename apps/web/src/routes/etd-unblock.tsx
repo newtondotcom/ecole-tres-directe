@@ -150,7 +150,7 @@ function EtdUnblockComponent({
         </Button>
         <Button variant="ghost" size="sm" asChild>
           <a
-            href="https://github.com/Magic-Fishes/Ecole-Directe-Plus-Unblock"
+            href="https://github.com/newtondotcom/ecole-tres-directe-Unblock"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm"
@@ -189,13 +189,13 @@ function EtdUnblockComponent({
                   Installez l&apos;extension
                 </CardTitle>
                 <CardDescription className="text-xl md:text-2xl">
-                  Ecole Directe Plus Unblock
+                  Ecole Tres Directe Unblock
                 </CardDescription>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-center text-muted-foreground text-lg">
-                Ecole Directe Plus a besoin de cette extension de navigateur pour{" "}
+                Ecole Tres Directe a besoin de cette extension de navigateur pour{" "}
                 <span className="font-bold text-foreground">
                   fonctionner correctement
                 </span>{" "}
@@ -333,13 +333,13 @@ function EtdUnblockComponent({
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">
-                Qu&apos;est-ce qu&apos;Ecole Directe Plus Unblock ?
+                Qu&apos;est-ce qu&apos;Ecole Tres Directe Unblock ?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
                 ETD Unblock est une extension de navigateur qui offre un accès
-                ininterrompu à Ecole Directe Plus en donnant l&apos;accès en continu
+                ininterrompu à Ecole Tres Directe en donnant l&apos;accès en continu
                 aux données fournies par l&apos;API d&apos;EcoleDirecte. Cette
                 extension est nécessaire au bon fonctionnement d&apos;Ecole Directe
                 Plus.
@@ -403,7 +403,7 @@ function EtdUnblockComponent({
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                L&apos;extension Ecole Directe Plus Unblock, tout comme le site Ecole
+                L&apos;extension Ecole Tres Directe Unblock, tout comme le site Ecole
                 Directe Plus, est un projet open-source sous license MIT, le code
                 source est donc disponible en ligne :{" "}
                 <a
