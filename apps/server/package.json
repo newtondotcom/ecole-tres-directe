@@ -10,12 +10,12 @@
     "start": "bun run dist/index.js"
   },
   "dependencies": {
-    "hono": "catalog:",
-    "@trpc/server": "catalog:",
+    "@ecole-tres-directe/api": "workspace:*",
     "@hono/trpc-server": "^0.4.0",
+    "@trpc/server": "catalog:",
     "dotenv": "catalog:",
-    "zod": "^4.1.11",
-    "@ecole-tres-directe/api": "workspace:*"
+    "hono": "catalog:",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@ecole-tres-directe/config": "workspace:*",

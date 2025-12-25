@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { appRouter } from "@ecole-tres-directe/api/routers/index";
 import { createContext } from "@ecole-tres-directe/api/context";
+import { serveStatic } from "hono/bun";
 
 const app = new Hono();
 
@@ -29,9 +30,7 @@ app.use(
 	}),
 );
 
-app.get("/", (c) => {
-	return c.text("OK");
-});
+app.get("/",serveStatic({path: "./public/index.html"}));
 
 export default {
 	port: 3001,
