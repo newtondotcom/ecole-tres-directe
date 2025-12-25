@@ -17,7 +17,7 @@ function PolicyComponent() {
         <article className="prose lg:prose-xl dark:prose-invert">
         <ul>
         <h3 id="confidentialite">Politique de confidentialité</h3>
-        <h4 >Résumé</h4>
+        <h4>Résumé</h4>
         <ul>
             <p><span id="info-emoji">ℹ️</span> Ecole Tres Directe n'est en aucun cas affilié à EcoleDirecte ou Aplim, il s'agit d'un service indépendant libre et open source.</p>
             <p>✅ Ecole Tres Directe ne collecte aucune information sur les utilisateurs du service.</p>

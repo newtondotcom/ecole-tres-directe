@@ -17,6 +17,10 @@ COPY . .
 # Build internal packages (generate dist/types)
 RUN bun run --cwd packages/api build
 
+RUN bun run --cwd apps/web build
+RUN mkdir -p apps/server/public
+COPY apps/web/dist apps/server/public
+
 # Compile server for target platform
 RUN bun compile:server && ls -la apps/server/server
 
