@@ -8,7 +8,7 @@ export async function getFirefoxExtensionLatestVersion() {
   try {
     const response = await fetch(FIREFOX_UPDATE_URL);
     const data = await response.json();
-    return data.addons["{etdu-firefox-self-host@ecole-tres-directe.vercel.app}"].updates[data.addons["{etdu-firefox-self-host@ecole-tres-directe.vercel.app}"].updates.length - 1].version;
+    return data.addons["{etdu-firefox-self-host@ecole-tres-directe.eu}"].updates[data.addons["{etdu-firefox-self-host@ecole-tres-directe.eu}"].updates.length - 1].version;
   } catch (error) {
     console.error("Failed to fetch Firefox extension latest version:", error);
     return undefined;
@@ -20,7 +20,7 @@ export async function getFirefoxExtensionLatestUpdateLink() {
     const response = await fetch(FIREFOX_UPDATE_URL);
     const data = await response.json();
     const updates =
-      data.addons["{etdu-firefox-self-host@ecole-tres-directe.vercel.app}"].updates;
+      data.addons["{etdu-firefox-self-host@ecole-tres-directe.eu}"].updates;
     return updates[updates.length - 1].update_link;
   } catch (error) {
     console.error("Failed to fetch Firefox URL:", error);
