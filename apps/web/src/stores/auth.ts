@@ -39,19 +39,16 @@ const initialState: AuthState = {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set,get) => ({
+    (set, get) => ({
       ...initialState,
       authenticate: async ({ username, password }, rememberMe = false) => {
         set({
           ...initialState,
-          isLoading: true
+          isLoading: true,
         });
 
         try {
-          const result = await loginUsingCredentials(
-            username,
-            password
-          );
+          const result = await loginUsingCredentials(username, password);
           if (!result) {
             throw new Error("Échec de l'authentification.");
           }
@@ -68,16 +65,18 @@ export const useAuthStore = create<AuthStore>()(
               username: session?.username,
             });
             isPatreonSubscribed = result.subscribed;
-            
+
             if (!isPatreonSubscribed) {
-              toast.error("Vous n'êtes pas abonné à Patreon. Merci de vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.");
+              toast.error(
+                "Vous n'êtes pas abonné à Patreon. Merci de vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.",
+              );
             }
           } catch (_patreonError) {
             // Log error but don't block authentication
             // Error silently ignored - continue with login even if Patreon check fails
             console.error(_patreonError);
           }
-          
+
           set({
             credentials: rememberMe ? { username, password } : { username, password: "" },
             session,
@@ -89,13 +88,11 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           const message =
-            error instanceof Error
-              ? error.message
-              : "Une erreur inattendue est survenue.";
+            error instanceof Error ? error.message : "Une erreur inattendue est survenue.";
           toast.error(message);
           set({
             ...initialState,
-            error: message
+            error: message,
           });
         }
       },
@@ -108,10 +105,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true });
 
         try {
-          const { session, account } = await validateSession(
-            state.session!,
-            password
-          );
+          const { session, account } = await validateSession(state.session!, password);
 
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
@@ -124,16 +118,19 @@ export const useAuthStore = create<AuthStore>()(
               username: session?.username,
             });
             isPatreonSubscribed = result.subscribed;
-            
+
             if (!isPatreonSubscribed) {
-              toast.error("Vous n'êtes pas abonné à Patreon. Vous pouvez vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.", {
-                action: {
-                  label: "S'abonner",
-                  onClick: () => {
-                    window.open("https://www.patreon.com/ecoletresdirecte", "_blank");
+              toast.error(
+                "Vous n'êtes pas abonné à Patreon. Vous pouvez vous abonner pour accéder à toutes les fonctionnalités de Ecole Tres Directe.",
+                {
+                  action: {
+                    label: "S'abonner",
+                    onClick: () => {
+                      window.open("https://www.patreon.com/ecoletresdirecte", "_blank");
+                    },
                   },
                 },
-              });
+              );
             }
           } catch (_patreonError) {
             // Log error but don't block authentication
@@ -150,9 +147,7 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           const message =
-            error instanceof Error
-              ? error.message
-              : "Impossible de valider la session.";
+            error instanceof Error ? error.message : "Impossible de valider la session.";
           toast.error(message);
           set({
             ...initialState,
@@ -165,27 +160,25 @@ export const useAuthStore = create<AuthStore>()(
       setAuthData: (payload) =>
         set(() => ({
           ...initialState,
-          ...payload
+          ...payload,
         })),
       resetAuthData: () => set(() => initialState),
       isAuthenticated: () => {
         const state = get();
         return Boolean(state.session && state.account);
-      }
+      },
     }),
     {
       name: "auth-storage",
       partialize: (state) => ({
         session: state.rememberMe ? state.session : undefined,
         account: state.rememberMe ? state.account : undefined,
-        credentials: state.rememberMe 
-          ? { username: state.credentials?.username ?? "", password: "" } 
+        credentials: state.rememberMe
+          ? { username: state.credentials?.username ?? "", password: "" }
           : undefined,
         rememberMe: state.rememberMe,
-        isPatreonSubscribed: state.isPatreonSubscribed
-      })
-    }
-  )
+        isPatreonSubscribed: state.isPatreonSubscribed,
+      }),
+    },
+  ),
 );
-
-

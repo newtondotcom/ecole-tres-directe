@@ -17,15 +17,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Calendar } from "@/components/ui/calendar";
-import { 
-  FileText, 
-  Home, 
-  MessageSquare, 
+import {
+  FileText,
+  Home,
+  MessageSquare,
   Settings,
   LogOut,
   Toilet,
   CheckCircle2,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
@@ -59,7 +59,8 @@ const menuItems = [
 ];
 
 export default function DashboardLayout() {
-  const { account, resetAuthData, isAuthenticated, isLoading, isPatreonSubscribed } = useAuthStore();
+  const { account, resetAuthData, isAuthenticated, isLoading, isPatreonSubscribed } =
+    useAuthStore();
   const router = useRouter();
   const pathname = router.state.location.pathname;
   const [isMounted, setIsMounted] = useState(false);
@@ -70,7 +71,7 @@ export default function DashboardLayout() {
   }, []);
 
   // Don't render anything on server side to avoid hydration mismatch
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-muted-foreground">Chargement...</div>
@@ -162,7 +163,12 @@ export default function DashboardLayout() {
                       ) : (
                         <XCircle className="h-4 w-4 text-red-500" />
                       )}
-                      <span className={cn("text-xs font-bold ml-2", isPatreonSubscribed ? "text-green-500" : "text-red-500")}>
+                      <span
+                        className={cn(
+                          "text-xs font-bold ml-2",
+                          isPatreonSubscribed ? "text-green-500" : "text-red-500",
+                        )}
+                      >
                         {isPatreonSubscribed
                           ? "Abonné au Patreon, merci !"
                           : "Pas abonné au Patreon..."}
@@ -186,10 +192,9 @@ export default function DashboardLayout() {
           <div className="flex-1" />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-          < Outlet />
+          <Outlet />
         </div>
       </SidebarInset>
     </SidebarProvider>
   );
 }
-

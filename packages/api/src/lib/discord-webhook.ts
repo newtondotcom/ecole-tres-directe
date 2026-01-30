@@ -35,15 +35,13 @@ export async function sendDiscordMessage({
 
   if (!webhookUrl) {
     const error = new Error(
-      "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement."
+      "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement.",
     );
     throw error;
   }
 
   if (!content && !embeds?.length) {
-    const error = new Error(
-      "Le message doit contenir au moins un contenu ou un embed."
-    );
+    const error = new Error("Le message doit contenir au moins un contenu ou un embed.");
     throw error;
   }
 
@@ -77,7 +75,7 @@ export async function sendDiscordMessage({
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `Échec de l'envoi du message Discord (${response.status}): ${errorText}`
+        `Échec de l'envoi du message Discord (${response.status}): ${errorText}`,
       );
       throw error;
     }
@@ -94,4 +92,3 @@ export async function sendDiscordMessage({
     throw unknownError;
   }
 }
-

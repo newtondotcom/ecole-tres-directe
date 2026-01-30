@@ -1,18 +1,16 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { FIREFOX_STORE_URL, getBrowser, getFirefoxExtensionLatestUpdateLink, getOS } from "@/lib/etd-unblock/utils";
+  FIREFOX_STORE_URL,
+  getBrowser,
+  getFirefoxExtensionLatestUpdateLink,
+  getOS,
+} from "@/lib/etd-unblock/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/etd-unblock")({
-	component: EtdUnblockComponent,
+  component: EtdUnblockComponent,
 });
 
 function EtdUnblockComponent({
@@ -49,8 +47,7 @@ function EtdUnblockComponent({
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (!heroBannerRef.current || !aboutButtonRef.current || !aboutRef.current)
-        return;
+      if (!heroBannerRef.current || !aboutButtonRef.current || !aboutRef.current) return;
 
       const heroRect = heroBannerRef.current.getBoundingClientRect();
       const aboutButtonRect = aboutButtonRef.current.getBoundingClientRect();
@@ -63,10 +60,7 @@ function EtdUnblockComponent({
           inline: "nearest",
           behavior: "smooth",
         });
-      } else if (
-        event.key === "ArrowUp" &&
-        heroRect.bottom >= aboutButtonRect.height
-      ) {
+      } else if (event.key === "ArrowUp" && heroRect.bottom >= aboutButtonRect.height) {
         event.preventDefault();
         heroBannerRef.current.scrollIntoView({
           block: "start",
@@ -160,7 +154,7 @@ function EtdUnblockComponent({
         </Button>
       </div>
       */}
-      
+
       {/* Help link */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
         <Button variant="ghost" asChild>
@@ -177,17 +171,11 @@ function EtdUnblockComponent({
             <CardHeader className="text-center space-y-4 pb-6">
               <div className="flex justify-center">
                 <div className="relative h-20 w-20">
-                  <img
-                    src="/firefox.svg"
-                    alt="Firefox"
-                    className="object-contain"
-                  />
+                  <img src="/firefox.svg" alt="Firefox" className="object-contain" />
                 </div>
               </div>
               <div className="space-y-2">
-                <CardTitle className="text-3xl md:text-4xl">
-                  Installez l&apos;extension
-                </CardTitle>
+                <CardTitle className="text-3xl md:text-4xl">Installez l&apos;extension</CardTitle>
                 <CardDescription className="text-xl md:text-2xl">
                   Ecole Tres Directe Unblock
                 </CardDescription>
@@ -196,13 +184,10 @@ function EtdUnblockComponent({
             <CardContent className="space-y-6">
               <p className="text-center text-muted-foreground text-lg">
                 Ecole Tres Directe a besoin de cette extension de navigateur pour{" "}
-                <span className="font-bold text-foreground">
-                  fonctionner correctement
-                </span>{" "}
-                et accéder à l&apos;API d&apos;EcoleDirecte. Pour des raisons de
-                vie privée et de choix techniques, nous ne supportons{" "}
-                <span className="font-semibold">que Firefox</span> (et les
-                navigateurs strictement basés sur son moteur).
+                <span className="font-bold text-foreground">fonctionner correctement</span> et
+                accéder à l&apos;API d&apos;EcoleDirecte. Pour des raisons de vie privée et de choix
+                techniques, nous ne supportons <span className="font-semibold">que Firefox</span>{" "}
+                (et les navigateurs strictement basés sur son moteur).
               </p>
 
               {compatibilityCondition &&
@@ -210,10 +195,9 @@ function EtdUnblockComponent({
                   <Card className="border-destructive bg-destructive/10">
                     <CardContent className="pt-6">
                       <p className="text-destructive">
-                        ETD Unblock ne peut pas fonctionner sur les navigateurs
-                        iOS/iPadOS en raison des restrictions imposées par Apple.
-                        Merci d&apos;utiliser un ordinateur ou un appareil Android
-                        avec Firefox.
+                        ETD Unblock ne peut pas fonctionner sur les navigateurs iOS/iPadOS en raison
+                        des restrictions imposées par Apple. Merci d&apos;utiliser un ordinateur ou
+                        un appareil Android avec Firefox.
                       </p>
                     </CardContent>
                   </Card>
@@ -221,10 +205,9 @@ function EtdUnblockComponent({
                   <Card className="border-destructive bg-destructive/10">
                     <CardContent className="pt-6 space-y-2">
                       <p className="text-destructive">
-                        Votre navigateur actuel n&apos;est pas supporté.
-                        Microsoft et Google restreignent l&apos;usage
-                        d&apos;extensions comme ETD Unblock sur les navigateurs
-                        Chromium (Chrome, Edge, Opera, Brave, etc.).
+                        Votre navigateur actuel n&apos;est pas supporté. Microsoft et Google
+                        restreignent l&apos;usage d&apos;extensions comme ETD Unblock sur les
+                        navigateurs Chromium (Chrome, Edge, Opera, Brave, etc.).
                       </p>
                       <p className="text-destructive">
                         Merci d&apos;installer un{" "}
@@ -263,32 +246,22 @@ function EtdUnblockComponent({
                     className="flex flex-col items-center gap-3"
                   >
                     <div className="relative h-14 w-14">
-                      <img
-                        src="/firefox.svg"
-                        alt="Firefox"
-                        className="object-contain"
-                      />
+                      <img src="/firefox.svg" alt="Firefox" className="object-contain" />
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       {isEtdUnblockActuallyInstalled ? (
                         <>
-                          <span className="font-semibold">
-                            Extension installée
-                          </span>
+                          <span className="font-semibold">Extension installée</span>
                           <span className="text-2xl">✓</span>
                         </>
                       ) : compatibilityCondition ? (
                         <>
-                          <span className="font-semibold">
-                            Navigateur incompatible
-                          </span>
+                          <span className="font-semibold">Navigateur incompatible</span>
                           <span className="text-2xl">✕</span>
                         </>
                       ) : (
                         <>
-                          <span className="font-semibold">
-                            Ajouter l&apos;extension
-                          </span>
+                          <span className="font-semibold">Ajouter l&apos;extension</span>
                         </>
                       )}
                     </div>
@@ -307,10 +280,7 @@ function EtdUnblockComponent({
                 hash="about"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (
-                    typeof window !== "undefined" &&
-                    window.location.hash === "#about"
-                  ) {
+                  if (typeof window !== "undefined" && window.location.hash === "#about") {
                     scrollToAbout();
                   } else {
                     window.location.hash = "#about";
@@ -326,11 +296,7 @@ function EtdUnblockComponent({
         </main>
 
         {/* About section */}
-        <div
-          ref={aboutRef}
-          className="mt-32 space-y-8 scroll-mt-20"
-          id="about"
-        >
+        <div ref={aboutRef} className="mt-32 space-y-8 scroll-mt-20" id="about">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">
@@ -339,43 +305,35 @@ function EtdUnblockComponent({
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                ETD Unblock est une extension de navigateur qui offre un accès
-                ininterrompu à Ecole Tres Directe en donnant l&apos;accès en continu
-                aux données fournies par l&apos;API d&apos;EcoleDirecte. Cette
-                extension est nécessaire au bon fonctionnement d&apos;Ecole Directe
-                Plus.
+                ETD Unblock est une extension de navigateur qui offre un accès ininterrompu à Ecole
+                Tres Directe en donnant l&apos;accès en continu aux données fournies par l&apos;API
+                d&apos;EcoleDirecte. Cette extension est nécessaire au bon fonctionnement
+                d&apos;Ecole Directe Plus.
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">
-                Où et comment installer ETD Unblock ?
-              </CardTitle>
+              <CardTitle className="text-2xl">Où et comment installer ETD Unblock ?</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                ETD Unblock étant une extension de navigateur, la source
-                d&apos;installation diffère en fonction de votre navigateur et votre
-                OS. Cliquez sur le bouton &quot;Ajouter l&apos;extension&quot;
-                ci-dessus et vous devriez être redirigé automatiquement vers la
-                boutique d&apos;extensions compatible avec votre navigateur. Mise
-                en garde : ETD Unblock n&apos;est pas disponible sur tous les
-                navigateurs suivant les plateformes. Si vous êtes sur MacOS, tous
-                les navigateurs hormis Safari devraient être compatibles avec EDP
-                Unblock. Si vous utilisez un ordinateur sous Windows ou Linux, la
-                grande majorité des navigateurs devraient être compatibles avec
-                l&apos;extension.
+                ETD Unblock étant une extension de navigateur, la source d&apos;installation diffère
+                en fonction de votre navigateur et votre OS. Cliquez sur le bouton &quot;Ajouter
+                l&apos;extension&quot; ci-dessus et vous devriez être redirigé automatiquement vers
+                la boutique d&apos;extensions compatible avec votre navigateur. Mise en garde : ETD
+                Unblock n&apos;est pas disponible sur tous les navigateurs suivant les plateformes.
+                Si vous êtes sur MacOS, tous les navigateurs hormis Safari devraient être
+                compatibles avec EDP Unblock. Si vous utilisez un ordinateur sous Windows ou Linux,
+                la grande majorité des navigateurs devraient être compatibles avec l&apos;extension.
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">
-                Vie privée et confidentialité
-              </CardTitle>
+              <CardTitle className="text-2xl">Vie privée et confidentialité</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
@@ -387,12 +345,11 @@ function EtdUnblockComponent({
                 <code className="px-2 py-1 bg-muted rounded text-sm font-mono">
                   ecoledirecte.com
                 </code>
-                . L&apos;extension ne peut pas accéder aux informations provenant de
-                n&apos;importe quel autre site web. De plus, ETD Unblock ne lit
-                aucune donnée : l&apos;extension joue simplement le rôle de passerelle
-                aux requêtes pour &quot;les amener correctement à destination&quot;,
-                mais n&apos;a pas accès à leur contenu. Ainsi, ETD Unblock ne
-                collecte aucune donnée et effectue toutes ces opérations en local sur
+                . L&apos;extension ne peut pas accéder aux informations provenant de n&apos;importe
+                quel autre site web. De plus, ETD Unblock ne lit aucune donnée : l&apos;extension
+                joue simplement le rôle de passerelle aux requêtes pour &quot;les amener
+                correctement à destination&quot;, mais n&apos;a pas accès à leur contenu. Ainsi, ETD
+                Unblock ne collecte aucune donnée et effectue toutes ces opérations en local sur
                 l&apos;appareil client.
               </p>
             </CardContent>
@@ -404,9 +361,9 @@ function EtdUnblockComponent({
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                L&apos;extension Ecole Tres Directe Unblock, tout comme le site Ecole
-                Directe Plus, est un projet open-source sous license MIT, le code
-                source est donc disponible en ligne :{" "}
+                L&apos;extension Ecole Tres Directe Unblock, tout comme le site Ecole Directe Plus,
+                est un projet open-source sous license MIT, le code source est donc disponible en
+                ligne :{" "}
                 <a
                   href="https://github.com/newtondotcom/Ecole-Tres-Directe-Unblock"
                   target="_blank"

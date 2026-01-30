@@ -4,10 +4,7 @@ import { useState, useTransition, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
 
-import {
-  type Step,
-  useAppreciationsStore
-} from "@/stores/appreciations";
+import { type Step, useAppreciationsStore } from "@/stores/appreciations";
 import { useAuthStore } from "@/stores/auth";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,19 +15,32 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import {
-  generateBatchAppreciations
-} from "@/actions/generate-appreciation";
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import { generateBatchAppreciations } from "@/actions/generate-appreciation";
 import { updateStudentAppreciation } from "@/actions/update-appreciation";
 import type { GeneratedAppreciation, SubjectAppreciation } from "@/types/appreciations";
 import { DEFAULT_APPRECIATION, DEFAULT_PROMPT } from "@/actions/appreciations";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { trpcClient } from "@/utils/trpc";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",
@@ -39,7 +49,7 @@ const STEP_LABELS: Record<Step, string> = {
   council_fetch: "Récupération des élèves",
   grades_fetch: "Chargement des appréciations",
   ready: "Récapitulatif disponible",
-  error: "Erreur"
+  error: "Erreur",
 };
 
 const STEP_ORDER: Step[] = [
@@ -47,7 +57,7 @@ const STEP_ORDER: Step[] = [
   "class_lookup",
   "council_fetch",
   "grades_fetch",
-  "ready"
+  "ready",
 ];
 
 export const Route = createFileRoute("/dashboard/remplir-appreciations")({
@@ -63,7 +73,7 @@ function RemplirAppreciationsComponent() {
     firstStudentRecap,
     students,
     getAppreciationsData,
-    reset
+    reset,
   } = useAppreciationsStore();
   const authStore = useAuthStore();
 
@@ -101,7 +111,9 @@ function RemplirAppreciationsComponent() {
   // Auto-scroll to bottom when new results are added
   useEffect(() => {
     if (batchResults && batchResults.length > 0 && scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-slot="scroll-area-viewport"]');
+      const scrollContainer = scrollAreaRef.current.querySelector(
+        '[data-slot="scroll-area-viewport"]',
+      );
       if (scrollContainer) {
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
       }
@@ -113,8 +125,7 @@ function RemplirAppreciationsComponent() {
       <header className="mb-8">
         <h1 className="text-3xl font-semibold">Remplir les appréciations</h1>
         <p className="mt-2 text-sm text-neutral-500">
-          Récupérez votre classe
-          principale et générez vos appréciations en quelques clics.
+          Récupérez votre classe principale et générez vos appréciations en quelques clics.
         </p>
       </header>
 
@@ -135,8 +146,7 @@ function RemplirAppreciationsComponent() {
                     <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
                       Connecté en tant que{" "}
                       <span className="font-semibold">
-                        {authStore.account?.firstName}{" "}
-                        {authStore.account?.lastName}
+                        {authStore.account?.firstName} {authStore.account?.lastName}
                       </span>
                       .
                     </div>
@@ -185,32 +195,23 @@ function RemplirAppreciationsComponent() {
               <Card>
                 <CardHeader>
                   <CardTitle>Étapes</CardTitle>
-                  <CardDescription>
-                    Suivez la progression des requêtes côté serveur
-                  </CardDescription>
+                  <CardDescription>Suivez la progression des requêtes côté serveur</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-2">
                     {STEP_ORDER.map((stepKey) => {
-                      const isCompleted =
-                        STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf(stepKey);
+                      const isCompleted = STEP_ORDER.indexOf(step) > STEP_ORDER.indexOf(stepKey);
                       const isCurrent = step === stepKey;
                       return (
                         <div
                           key={stepKey}
                           className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${
-                            isCurrent
-                              ? "border-neutral-900 bg-neutral-50"
-                              : "border-neutral-200"
+                            isCurrent ? "border-neutral-900 bg-neutral-50" : "border-neutral-200"
                           }`}
                         >
                           <span>{STEP_LABELS[stepKey]}</span>
-                          {isCurrent && (
-                            <span className="text-neutral-500">En cours</span>
-                          )}
-                          {isCompleted && (
-                            <span className="text-green-600">OK</span>
-                          )}
+                          {isCurrent && <span className="text-neutral-500">En cours</span>}
+                          {isCompleted && <span className="text-green-600">OK</span>}
                         </div>
                       );
                     })}
@@ -255,9 +256,7 @@ function RemplirAppreciationsComponent() {
                 >
                   <Card className="h-full">
                     <CardHeader>
-                      <CardTitle>
-                        Génération des appréciations générales
-                      </CardTitle>
+                      <CardTitle>Génération des appréciations générales</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <Accordion type="single" collapsible className="w-full">
@@ -269,9 +268,7 @@ function RemplirAppreciationsComponent() {
                               placeholder={DEFAULT_PROMPT}
                               rows={3}
                               value={promptInstruction}
-                              onChange={(event) =>
-                                setPromptInstruction(event.target.value)
-                              }
+                              onChange={(event) => setPromptInstruction(event.target.value)}
                             />
                           </AccordionContent>
                         </AccordionItem>
@@ -287,9 +284,7 @@ function RemplirAppreciationsComponent() {
                               placeholder={DEFAULT_APPRECIATION}
                               rows={8}
                               value={userAppreciations}
-                              onChange={(event) =>
-                                setUserAppreciations(event.target.value)
-                              }
+                              onChange={(event) => setUserAppreciations(event.target.value)}
                             />
                           </AccordionContent>
                         </AccordionItem>
@@ -297,11 +292,10 @@ function RemplirAppreciationsComponent() {
                         <AccordionItem value="test">
                           <AccordionTrigger>Test de génération</AccordionTrigger>
                           <AccordionContent className="space-y-4">
-
-                          <div className="text-sm text-neutral-500">
-                            <span className="font-bold">{firstStudentRecap.studentName}</span> —{" "}
-                            <span className="font-semibold">{firstStudentRecap.periodName}</span>
-                          </div>
+                            <div className="text-sm text-neutral-500">
+                              <span className="font-bold">{firstStudentRecap.studentName}</span> —{" "}
+                              <span className="font-semibold">{firstStudentRecap.periodName}</span>
+                            </div>
                             <ScrollArea className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
                               <div className="space-y-3 p-3 pr-4">
                                 {firstStudentRecap.subjects.map((subject: SubjectAppreciation) => (
@@ -318,8 +312,7 @@ function RemplirAppreciationsComponent() {
                                     </CardHeader>
                                     <CardContent className="p-4 pt-0">
                                       <p className="text-sm text-neutral-700">
-                                        {subject.appreciation ||
-                                          "Aucune appréciation disponible."}
+                                        {subject.appreciation || "Aucune appréciation disponible."}
                                       </p>
                                     </CardContent>
                                   </Card>
@@ -336,7 +329,7 @@ function RemplirAppreciationsComponent() {
                                   subjects: firstStudentRecap.subjects,
                                   studentFirstName: firstStudentRecap.studentFirstName,
                                   studentGender: firstStudentRecap.studentGender,
-                                  userAppreciations: userAppreciations || undefined
+                                  userAppreciations: userAppreciations || undefined,
                                 });
                               }}
                               className="w-full"
@@ -375,9 +368,7 @@ function RemplirAppreciationsComponent() {
                                       !classSummary ||
                                       !firstStudentRecap
                                     ) {
-                                      setUploadError(
-                                        "Données manquantes pour l'upload."
-                                      );
+                                      setUploadError("Données manquantes pour l'upload.");
                                       return;
                                     }
                                     startUpload(async () => {
@@ -388,7 +379,7 @@ function RemplirAppreciationsComponent() {
                                           studentId: firstStudentRecap.studentId,
                                           classId: classSummary.classId,
                                           periodCode: classSummary.periodCode,
-                                          appreciationText: generatedAppreciation
+                                          appreciationText: generatedAppreciation,
                                         });
                                         setUploadSuccess(true);
                                       } catch (error) {
@@ -403,9 +394,7 @@ function RemplirAppreciationsComponent() {
                                   }}
                                   className="w-full"
                                 >
-                                  {isUploading
-                                    ? "Upload en cours..."
-                                    : "Uploader l'appréciation"}
+                                  {isUploading ? "Upload en cours..." : "Uploader l'appréciation"}
                                 </Button>
                                 {uploadError && (
                                   <p className="text-sm text-red-600">{uploadError}</p>
@@ -424,11 +413,7 @@ function RemplirAppreciationsComponent() {
                     <CardFooter className="flex flex-wrap items-center justify-end gap-3">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            disabled={isBatching}
-                          >
+                          <Button type="button" variant="destructive" disabled={isBatching}>
                             {isBatching
                               ? "Génération et remplissage de tous les élèves..."
                               : "Générer et remplir pour tous les élèves"}
@@ -436,13 +421,11 @@ function RemplirAppreciationsComponent() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Confirmer la génération en lot
-                            </AlertDialogTitle>
+                            <AlertDialogTitle>Confirmer la génération en lot</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Cette action va générer une appréciation
-                              pour chacun et remplir son appréciatio dans Ecole Directe. Cela peut prendre
-                              quelques minutes, voulez-vous continuer ?
+                              Cette action va générer une appréciation pour chacun et remplir son
+                              appréciatio dans Ecole Directe. Cela peut prendre quelques minutes,
+                              voulez-vous continuer ?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -457,23 +440,24 @@ function RemplirAppreciationsComponent() {
                                       // Reset results at the start
                                       setBatchResults([]);
                                       setBatchError(null);
-                                      
-                                      const results =
-                                        await generateBatchAppreciations({
-                                          prompt: promptInstruction,
-                                          userAppreciations: userAppreciations || undefined,
-                                          onProgress: (result) => {
-                                            // Add each result as it's generated
-                                            setBatchResults((prev) => {
-                                              if (!prev) return [result];
-                                              // Avoid duplicates
-                                              if (prev.some(r => r.studentId === result.studentId)) {
-                                                return prev;
-                                              }
-                                              return [...prev, result];
-                                            });
-                                          }
-                                        });
+
+                                      const results = await generateBatchAppreciations({
+                                        prompt: promptInstruction,
+                                        userAppreciations: userAppreciations || undefined,
+                                        onProgress: (result) => {
+                                          // Add each result as it's generated
+                                          setBatchResults((prev) => {
+                                            if (!prev) return [result];
+                                            // Avoid duplicates
+                                            if (
+                                              prev.some((r) => r.studentId === result.studentId)
+                                            ) {
+                                              return prev;
+                                            }
+                                            return [...prev, result];
+                                          });
+                                        },
+                                      });
                                       // Final update with all results (in case callback missed any)
                                       setBatchResults(results);
                                     } catch (error) {
@@ -501,14 +485,18 @@ function RemplirAppreciationsComponent() {
                     {batchResults && batchResults.length > 0 && (
                       <CardContent>
                         <Label className="mb-2 block">
-                          Appréciations générées ({batchResults.length}{students ? ` / ${students.length}` : ""} élèves)
+                          Appréciations générées ({batchResults.length}
+                          {students ? ` / ${students.length}` : ""} élèves)
                           {isBatching && (
                             <span className="ml-2 text-sm font-normal text-neutral-500">
                               — Génération en cours...
                             </span>
                           )}
                         </Label>
-                        <ScrollArea ref={scrollAreaRef} className="max-h-[20rem] h-72 rounded-md border border-neutral-100">
+                        <ScrollArea
+                          ref={scrollAreaRef}
+                          className="max-h-[20rem] h-72 rounded-md border border-neutral-100"
+                        >
                           <div className="space-y-3 p-3 pr-4">
                             <AnimatePresence>
                               {batchResults.map((result) => (

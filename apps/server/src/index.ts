@@ -12,28 +12,28 @@ console.log(process.env.CORS_ORIGIN);
 
 app.use(logger());
 app.use(
-	"/*",
-	cors({
-		origin: process.env.CORS_ORIGIN || "",
-		allowMethods: ["GET", "POST", "OPTIONS"],
-	}),
+  "/*",
+  cors({
+    origin: process.env.CORS_ORIGIN || "",
+    allowMethods: ["GET", "POST", "OPTIONS"],
+  }),
 );
 
 app.use(
-	"/trpc/*",
-	trpcServer({
-		router: appRouter,
-		createContext: (_opts, context) => {
-			return createContext({ context });
-		},
-	}),
+  "/trpc/*",
+  trpcServer({
+    router: appRouter,
+    createContext: (_opts, context) => {
+      return createContext({ context });
+    },
+  }),
 );
 
 app.get("/", (c) => {
-	return c.text("OK");
+  return c.text("OK");
 });
 
 export default {
-	port: 3001,
-	fetch: app.fetch,
-}
+  port: 3001,
+  fetch: app.fetch,
+};

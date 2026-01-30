@@ -64,12 +64,12 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
     set({ isLoading: true, error: undefined });
 
     try {
-        const { getLevels } = useLevelsStore();
-        const levels = await getLevels(session, teacherId);
+      const { getLevels } = useLevelsStore();
+      const levels = await getLevels(session, teacherId);
       const firstSchool = levels.schools[0];
       const firstLevel = firstSchool?.levels[0];
       const firstClass = firstLevel?.classes[0];
-      
+
       set({
         levels,
         selectedSchool: firstSchool,
@@ -79,8 +79,9 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
         error: undefined,
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erreur lors de la récupération des niveaux";
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Erreur lors de la récupération des niveaux";
+
       set({
         levels: undefined,
         selectedSchool: undefined,
@@ -96,11 +97,11 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
 
   getLevels: async (session: Session, teacherId: number) => {
     const state = get();
-    
+
     if (state.levels) {
       return state.levels;
     }
-    
+
     await state.fetchLevels(session, teacherId);
     return get().levels!;
   },

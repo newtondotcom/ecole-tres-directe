@@ -6,17 +6,13 @@ import {
   type Session,
   type TeacherClassCouncil,
   type TeacherClassCouncilStudent,
-  type TeacherClassCouncilStudentUpdatePayload
+  type TeacherClassCouncilStudentUpdatePayload,
 } from "pawdirecte-teacher";
 
-import {
-  buildStudentRecap,
-  findFirstPrincipalClass
-} from "@/actions/appreciations";
+import { buildStudentRecap, findFirstPrincipalClass } from "@/actions/appreciations";
 import type { GeneratedAppreciation } from "@/types/appreciations";
 import { useAuthStore } from "@/stores/auth";
 import { trpcClient } from "@/utils/trpc";
-
 
 type GenerateBatchParams = {
   prompt: string;
@@ -27,17 +23,13 @@ type GenerateBatchParams = {
 export async function generateBatchAppreciations({
   prompt,
   userAppreciations,
-  onProgress
+  onProgress,
 }: GenerateBatchParams): Promise<GeneratedAppreciation[]> {
   const authStore = useAuthStore.getState();
 
-  if (
-    !authStore.session ||
-    !authStore.account ||
-    !authStore.credentials
-  ) {
+  if (!authStore.session || !authStore.account || !authStore.credentials) {
     const error = new Error(
-      "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+      "Aucune session active. Veuillez vous connecter depuis la page de connexion.",
     );
     throw error;
   }
@@ -50,7 +42,7 @@ export async function generateBatchAppreciations({
     session,
     account.id,
     classSummary.classId,
-    classSummary.periodCode
+    classSummary.periodCode,
   );
 
   if (!council.students.length) {
@@ -68,7 +60,7 @@ export async function generateBatchAppreciations({
         subjects: recap.subjects,
         studentFirstName: student.firstName,
         studentGender: student.gender,
-        userAppreciations: userAppreciations || undefined
+        userAppreciations: userAppreciations || undefined,
       });
 
       await uploadGeneratedAppreciation({
@@ -78,16 +70,16 @@ export async function generateBatchAppreciations({
         periodCode: classSummary.periodCode,
         council,
         student,
-        appreciationText: appreciation
+        appreciationText: appreciation,
       });
 
       const result: GeneratedAppreciation = {
         studentId: recap.studentId,
         studentName: recap.studentName,
-        appreciation
+        appreciation,
       };
       results.push(result);
-      
+
       // Notify progress callback if provided
       if (onProgress) {
         onProgress(result);
@@ -119,7 +111,7 @@ async function uploadGeneratedAppreciation({
   periodCode,
   council,
   student,
-  appreciationText
+  appreciationText,
 }: UploadGeneratedAppreciationParams) {
   try {
     const studentIndex = council.students.findIndex((s) => s.id === student.id);
@@ -131,25 +123,18 @@ async function uploadGeneratedAppreciation({
         appreciationPrincipalTeacher: {
           ...student.appreciationPrincipalTeacher,
           text: appreciationText.trim(),
-          date: new Date()
+          date: new Date(),
         },
         isFirst: isFirst,
         isLast: isLast,
       },
       classAppreciation: council.classAppreciation
         ? { ...council.classAppreciation, date: new Date() }
-        : undefined
+        : undefined,
     };
 
-    await updateTeacherClassCouncilStudent(
-      session,
-      teacherId,
-      classId,
-      periodCode,
-      payload
-    );
+    await updateTeacherClassCouncilStudent(session, teacherId, classId, periodCode, payload);
   } catch (error) {
     console.error(error);
   }
 }
-

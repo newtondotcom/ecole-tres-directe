@@ -1,4 +1,3 @@
-
 import { getFirefoxExtensionLatestVersion } from "@/lib/etd-unblock/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -14,13 +13,14 @@ export function UnblockListener() {
   async function checkIfLatestVersionIsInstalled(version: string) {
     const latestVersion = await getFirefoxExtensionLatestVersion();
     if (version !== latestVersion) {
-      toast.info(`Une nouvelle version de l'extension ETD Unblock est disponible. Veuillez la mettre à jour`,
+      toast.info(
+        `Une nouvelle version de l'extension ETD Unblock est disponible. Veuillez la mettre à jour`,
         {
           action: {
             label: "MàJ",
             onClick: () => window.open("/etd-unblock", "_self"),
           },
-        }
+        },
       );
       return false;
     }
@@ -32,15 +32,13 @@ export function UnblockListener() {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "ETD_UNBLOCK") {
         const version = event.data?.payload?.version;
-        console.info(
-          `[ETD Unblock] Extension détectée${version ? ` (v${version})` : ""}.`
-        );
+        console.info(`[ETD Unblock] Extension détectée${version ? ` (v${version})` : ""}.`);
         setIsInstalled(true);
         document.body.dataset.etdUnblock = "installed";
         window.dispatchEvent(
           new CustomEvent("etd-unblock-installed", {
             detail: event.data?.payload ?? null,
-          })
+          }),
         );
         checkIfLatestVersionIsInstalled(version);
       }
@@ -61,5 +59,3 @@ export function UnblockListener() {
 
   return null;
 }
-
-

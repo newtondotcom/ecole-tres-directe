@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "check": "oxlint",
+    "check": "oxlint && oxfmt --write",
     "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only",
     "dev": "turbo dev",
     "build": "turbo build",
@@ -33,6 +33,7 @@
     "@intellectronica/ruler": "^0.3.16",
     "@tailwindcss/typography": "^0.5.19",
     "@types/bun": "^1.2.6",
+    "oxfmt": "^0.27.0",
     "oxlint": "^1.12.0",
     "turbo": "^2.7.2"
   },

@@ -5,7 +5,7 @@ import type {
   PrincipalClassSummary,
   StudentRecap,
   StudentSummary,
-  Credentials
+  Credentials,
 } from "@/types/appreciations";
 import { fetchAppreciationsData } from "@/actions/appreciations";
 import { useAuthStore } from "@/stores/auth";
@@ -19,7 +19,7 @@ export type Step =
   | "ready"
   | "error";
 
- type AppreciationsStoreState = {
+type AppreciationsStoreState = {
   step: Step;
   isLoading: boolean;
   error?: string;
@@ -31,7 +31,7 @@ export type Step =
   account?: Account;
 };
 
- type AppreciationsStoreActions = {
+type AppreciationsStoreActions = {
   getAppreciationsData: () => Promise<void>;
   reset: () => void;
 };
@@ -47,7 +47,7 @@ const initialState: AppreciationsStoreState = {
   firstStudentRecap: undefined,
   credentials: undefined,
   session: undefined,
-  account: undefined
+  account: undefined,
 };
 
 export const useAppreciationsStore = create<AppreciationsStore>((set) => ({
@@ -56,61 +56,55 @@ export const useAppreciationsStore = create<AppreciationsStore>((set) => ({
     set({
       ...initialState,
       step: "authenticating",
-      isLoading: true
+      isLoading: true,
     });
 
     try {
       const authStore = useAuthStore.getState();
 
-      if (
-        !authStore.session ||
-        !authStore.account ||
-        !authStore.credentials
-      ) {
+      if (!authStore.session || !authStore.account || !authStore.credentials) {
         throw new Error(
-          "Aucune session active. Veuillez vous connecter depuis la page de connexion."
+          "Aucune session active. Veuillez vous connecter depuis la page de connexion.",
         );
       }
 
       const result = await fetchAppreciationsData({
         session: authStore.session,
-        account: authStore.account
+        account: authStore.account,
       });
 
       set({
         classSummary: result.classSummary,
-        step: "class_lookup"
+        step: "class_lookup",
       });
       set({
         students: result.students,
-        step: "council_fetch"
+        step: "council_fetch",
       });
       set({
         firstStudentRecap: result.firstStudentRecap,
         step: "grades_fetch",
         credentials: authStore.credentials,
         session: authStore.session,
-        account: authStore.account
+        account: authStore.account,
       });
       set({
         step: "ready",
         isLoading: false,
-        error: undefined
+        error: undefined,
       });
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "Une erreur inattendue est survenue.";
+        error instanceof Error ? error.message : "Une erreur inattendue est survenue.";
       set({
         ...initialState,
         step: "error",
         error: message,
-        isLoading: false
+        isLoading: false,
       });
-    } 
+    }
   },
   reset: () => {
     set(initialState);
-  }
+  },
 }));

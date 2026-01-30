@@ -10,11 +10,11 @@ export type CheckPatreonParams = {
 };
 
 export const checkPatreonSchema = z.object({
-	accountId: z.number(),
-	firstName: z.string(),
-	lastName: z.string(),
-	schoolName: z.string().optional(),
-	username: z.string().optional(),
+  accountId: z.number(),
+  firstName: z.string(),
+  lastName: z.string(),
+  schoolName: z.string().optional(),
+  username: z.string().optional(),
 });
 
 export async function checkPatreonSubscription({
@@ -26,7 +26,7 @@ export async function checkPatreonSubscription({
 }: CheckPatreonParams) {
   // For now, just send user info to Discord
   // TODO: Add actual Patreon subscription check via Patreon API
-  const isSubscribed = false; 
+  const isSubscribed = false;
 
   // Send Discord notification
   try {
@@ -83,9 +83,6 @@ export async function checkPatreonSubscription({
 
   return {
     subscribed: isSubscribed,
-    message: isSubscribed
-      ? "Vous êtes abonné à Patreon"
-      : "Vous n'êtes pas abonné à Patreon",
+    message: isSubscribed ? "Vous êtes abonné à Patreon" : "Vous n'êtes pas abonné à Patreon",
   };
 }
-

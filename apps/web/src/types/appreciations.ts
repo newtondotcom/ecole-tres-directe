@@ -47,4 +47,3 @@ export type GeneratedAppreciation = {
   studentName: string;
   appreciation: string;
 };
-

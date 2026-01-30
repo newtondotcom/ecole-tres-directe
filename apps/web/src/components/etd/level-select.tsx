@@ -3,21 +3,21 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ChevronDownIcon, DotIcon } from "lucide-react"
-import { useEffect } from "react"
-import { useLevelsStore } from "@/stores/levels"
-import { useAuthStore } from "@/stores/auth"
+} from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon, DotIcon } from "lucide-react";
+import { useEffect } from "react";
+import { useLevelsStore } from "@/stores/levels";
+import { useAuthStore } from "@/stores/auth";
 
 export function LevelSelect() {
-  const { session, account } = useAuthStore()
+  const { session, account } = useAuthStore();
   const {
     levels,
     isLoading,
@@ -27,31 +27,31 @@ export function LevelSelect() {
     getLevels,
     setSelectedLevel,
     setSelectedClass,
-  } = useLevelsStore()
+  } = useLevelsStore();
 
   useEffect(() => {
     if (session && account) {
-      getLevels(session, account.id)
+      getLevels(session, account.id);
     }
-  }, [session, account, getLevels])
+  }, [session, account, getLevels]);
 
   // Get levels only from the selected school
-  const schoolLevels = selectedSchool?.levels ?? []
-  
+  const schoolLevels = selectedSchool?.levels ?? [];
+
   // Get classes for the selected level
-  const availableClasses = selectedLevel?.classes ?? []
+  const availableClasses = selectedLevel?.classes ?? [];
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">Chargement...</div>
+    return <div className="text-sm text-muted-foreground">Chargement...</div>;
   }
 
   if (!levels || !selectedSchool) {
-    return null
+    return null;
   }
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>  
+      <BreadcrumbList>
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -77,8 +77,8 @@ export function LevelSelect() {
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button 
-                className="flex items-center gap-1" 
+              <button
+                className="flex items-center gap-1"
                 accessKey="classes"
                 disabled={!selectedLevel || availableClasses.length === 0}
               >
@@ -99,5 +99,5 @@ export function LevelSelect() {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  )
+  );
 }

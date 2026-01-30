@@ -8,7 +8,7 @@ export const Route = createFileRoute("/dashboard/correction-appreciations")({
 function CorrectionAppreciationsPage() {
   return (
     <div className="flex flex-col gap-4">
-      < LevelSelect />
+      <LevelSelect />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import {
   teacherClassCouncil,
   updateTeacherClassCouncilStudent,
-  type TeacherClassCouncilStudentUpdatePayload
+  type TeacherClassCouncilStudentUpdatePayload,
 } from "pawdirecte-teacher";
 
 import { useAuthStore } from "@/stores/auth";
@@ -19,31 +19,22 @@ export async function updateStudentAppreciation({
   studentId,
   classId,
   periodCode,
-  appreciationText
+  appreciationText,
 }: UpdateStudentAppreciationParams) {
   const authStore = useAuthStore.getState();
 
-    if (
-      !authStore.session ||
-      !authStore.account ||
-      !authStore.credentials
-    ) {
-      const error = new Error(
-        "Aucune session active. Veuillez vous connecter depuis la page de connexion."
-      );
-      throw error;
-    }
+  if (!authStore.session || !authStore.account || !authStore.credentials) {
+    const error = new Error(
+      "Aucune session active. Veuillez vous connecter depuis la page de connexion.",
+    );
+    throw error;
+  }
 
   const session = authStore.session;
   const accountId = authStore.account.id;
 
   // Fetch the council to get current student data
-  const council = await teacherClassCouncil(
-    session,
-    accountId,
-    classId,
-    periodCode
-  );
+  const council = await teacherClassCouncil(session, accountId, classId, periodCode);
 
   if (!council.students.length) {
     const error = new Error("Aucun élève trouvé dans cette classe.");
@@ -55,9 +46,7 @@ export async function updateStudentAppreciation({
   const student = council.students[studentIndex];
 
   if (!student || studentIndex === -1) {
-    const error = new Error(
-      `Élève avec l'ID ${studentId} introuvable dans cette classe.`
-    );
+    const error = new Error(`Élève avec l'ID ${studentId} introuvable dans cette classe.`);
     throw error;
   }
 
@@ -72,7 +61,7 @@ export async function updateStudentAppreciation({
       appreciationPrincipalTeacher: {
         ...student.appreciationPrincipalTeacher,
         text: appreciationText.trim(),
-        date: new Date()
+        date: new Date(),
       },
       isFirst,
       isLast,
@@ -80,9 +69,9 @@ export async function updateStudentAppreciation({
     classAppreciation: council.classAppreciation
       ? {
           ...council.classAppreciation,
-          date: new Date()
+          date: new Date(),
         }
-      : undefined
+      : undefined,
   };
 
   // Update the student's appreciation
@@ -91,11 +80,11 @@ export async function updateStudentAppreciation({
     accountId,
     classId,
     periodCode,
-    payload
+    payload,
   );
-  
+
   return {
     success: true,
-    result
+    result,
   };
 }
