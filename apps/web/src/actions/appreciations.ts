@@ -1,7 +1,6 @@
 import {
   teacherClassCouncil,
   teacherGrades,
-  teacherLevelsList,
   type Session,
   type Account,
   type TeacherClassCouncilStudent,
@@ -15,6 +14,7 @@ import type {
   SubjectAppreciation,
   StudentSummary
 } from "@/types/appreciations";
+import { useLevelsStore } from "@/stores/levels";
 
 export const DEFAULT_APPRECIATION = 
 `Un trimestre avec des résultats hétérogènes pour Adam. Vous produisez un travail sérieux manquant de régularité dans certaines disciplines. Vous avez montré une belle implication en classe soulignée par plusieurs professeurs, il faut maintenant l'étendre à toutes les disciplines. Allez Adam !
@@ -78,7 +78,8 @@ export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number
 ): Promise<PrincipalClassSummary> {
-  const levels = await teacherLevelsList(session, teacherId);
+  const { getLevels } = useLevelsStore();
+  const levels = await getLevels(session, teacherId);
 
   for (const school of levels.schools) {
     for (const level of school.levels) {
@@ -132,6 +133,7 @@ export async function buildStudentRecap(
     };
   } catch (error) {
     console.error(error);
+    throw new Error("Erreur lors de la récupération des notes de l'élève.");
   }
 }
 

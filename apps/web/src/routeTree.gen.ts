@@ -18,6 +18,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
 import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
+import { Route as DashboardCorrectionAppreciationsRouteImport } from './routes/dashboard/correction-appreciations'
 
 const PolitiquesRoute = PolitiquesRouteImport.update({
   id: '/politiques',
@@ -65,6 +66,12 @@ const DashboardFeedbackRoute = DashboardFeedbackRouteImport.update({
   path: '/feedback',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardCorrectionAppreciationsRoute =
+  DashboardCorrectionAppreciationsRouteImport.update({
+    id: '/correction-appreciations',
+    path: '/correction-appreciations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
   '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
   '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -94,6 +103,7 @@ export interface FileRoutesById {
   '/etd-unblock': typeof EtdUnblockRoute
   '/login': typeof LoginRoute
   '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
   '/dashboard/feedback': typeof DashboardFeedbackRoute
   '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/etd-unblock'
     | '/login'
     | '/politiques'
+    | '/dashboard/correction-appreciations'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/etd-unblock'
     | '/login'
     | '/politiques'
+    | '/dashboard/correction-appreciations'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -128,6 +140,7 @@ export interface FileRouteTypes {
     | '/etd-unblock'
     | '/login'
     | '/politiques'
+    | '/dashboard/correction-appreciations'
     | '/dashboard/feedback'
     | '/dashboard/remplir-appreciations'
     | '/dashboard/settings'
@@ -207,10 +220,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardFeedbackRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/correction-appreciations': {
+      id: '/dashboard/correction-appreciations'
+      path: '/correction-appreciations'
+      fullPath: '/dashboard/correction-appreciations'
+      preLoaderRoute: typeof DashboardCorrectionAppreciationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
 interface DashboardRouteRouteChildren {
+  DashboardCorrectionAppreciationsRoute: typeof DashboardCorrectionAppreciationsRoute
   DashboardFeedbackRoute: typeof DashboardFeedbackRoute
   DashboardRemplirAppreciationsRoute: typeof DashboardRemplirAppreciationsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -218,6 +239,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardCorrectionAppreciationsRoute: DashboardCorrectionAppreciationsRoute,
   DashboardFeedbackRoute: DashboardFeedbackRoute,
   DashboardRemplirAppreciationsRoute: DashboardRemplirAppreciationsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
