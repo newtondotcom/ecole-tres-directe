@@ -1,6 +1,27 @@
+import { v4 as uuidv4 } from "uuid";
 import { setAccessToken, type Session, DoubleAuthRequired, login } from "pawdirecte-teacher";
-  
-export const uuid = "your-device-uuid";
+
+const DEVICE_UUID_COOKIE = "device_uuid";
+const DEVICE_UUID_MAX_AGE = 60 * 60 * 24 * 365 * 2;
+
+function readCookie(name: string) {
+  if (typeof document === "undefined") return undefined;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match?.[1];
+}
+
+function writeCookie(name: string, value: string) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${name}=${value}; path=/; max-age=${DEVICE_UUID_MAX_AGE}; samesite=lax`;
+}
+
+export function getDeviceUuid() {
+  const existing = readCookie(DEVICE_UUID_COOKIE);
+  if (existing) return existing;
+  const created = uuidv4();
+  writeCookie(DEVICE_UUID_COOKIE, created);
+  return created;
+}
 
 export async function loginUsingCredentials(
   username: string,
@@ -8,7 +29,7 @@ export async function loginUsingCredentials(
 ) {
   try {
     console.info("Initializing a session using credentials...");
-    const session: Session = { username, device_uuid: uuid };
+    const session: Session = { username, device_uuid: getDeviceUuid() };
 
     const accounts = await login(session, password).catch(async (error) => {
       // Handle double authentication, if required.
