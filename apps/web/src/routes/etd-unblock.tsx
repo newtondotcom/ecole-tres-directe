@@ -164,7 +164,7 @@ function EtdUnblockComponent({
       {/* Help link */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
         <Button variant="ghost" asChild>
-          <Link to="/feedback" className="text-sm">
+          <Link to="/dashboard/feedback" className="text-sm">
             Besoin d&apos;aide ?
           </Link>
         </Button>
@@ -303,7 +303,8 @@ function EtdUnblockComponent({
             <Button variant="ghost" asChild className="flex flex-col items-center gap-2">
               <Link
                 ref={aboutButtonRef}
-                to="#about"
+                to="/etd-unblock"
+                hash="about"
                 onClick={(e) => {
                   e.preventDefault();
                   if (

@@ -155,7 +155,7 @@ export default function DashboardLayout() {
             <SidebarMenuItem>
               {isPatreonSubscribed !== undefined && (
                 <SidebarMenuButton asChild>
-                  <Link to={PATREON_URL} target="_blank">
+                  <a href={PATREON_URL} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-center cursor-pointer">
                       {isPatreonSubscribed ? (
                         <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -168,7 +168,7 @@ export default function DashboardLayout() {
                           : "Pas abonné au Patreon..."}
                       </span>
                     </div>
-                  </Link>
+                  </a>
                 </SidebarMenuButton>
               )}
               <SidebarMenuButton onClick={handleLogout}>

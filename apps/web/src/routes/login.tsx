@@ -292,11 +292,11 @@ function RouteComponent() {
           </Card>
           <FieldDescription className="px-6 text-center text-sm text-muted-foreground">
             En continuant, vous acceptez nos {""}
-            <Link to="/politiques#utilisations" className="underline">
+            <Link to="/politiques" hash="utilisations" className="underline">
               Conditions d&apos;utilisation
             </Link>{" "}
             et notre {""}
-            <Link to="/politiques#confidentialite" className="underline">
+            <Link to="/politiques" hash="confidentialite" className="underline">
               Politique de confidentialité
             </Link>
             .

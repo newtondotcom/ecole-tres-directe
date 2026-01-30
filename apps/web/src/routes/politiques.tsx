@@ -11,7 +11,7 @@ export const Route = createFileRoute("/politiques")({
 function PolicyComponent() {
     // randomize the appariton order of the lead developpers (credits)
     const leadDeveloppers = [<a href="https://github.com/newtondotcom">newtondotcom</a>];
-    const [firstLeadDeveloppersDisplayedIdx, setFirstLeadDevelopperDisplayedIdx] = useState(Math.floor(Math.random() * 2));
+    const [firstLeadDeveloppersDisplayedIdx] = useState(Math.floor(Math.random() * 2));
 
     return (
         <article className="prose lg:prose-xl dark:prose-invert">

@@ -48,10 +48,14 @@ export const useAuthStore = create<AuthStore>()(
         });
 
         try {
-          const { session, account } = await loginUsingCredentials(
+          const result = await loginUsingCredentials(
             username,
             password
           );
+          if (!result) {
+            throw new Error("Échec de l'authentification.");
+          }
+          const { session, account } = result;
 
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
