@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type Session } from "pawdirecte-teacher";
+import { teacherLevelsList, type Session } from "pawdirecte-teacher";
 import { toast } from "sonner";
 
 type School = {
@@ -64,8 +64,8 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
     set({ isLoading: true, error: undefined });
 
     try {
-      const { getLevels } = useLevelsStore();
-      const levels = await getLevels(session, teacherId);
+      const levels = await teacherLevelsList(session, teacherId);
+      console.log("levels", levels);
       const firstSchool = levels.schools[0];
       const firstLevel = firstSchool?.levels[0];
       const firstClass = firstLevel?.classes[0];
@@ -99,10 +99,11 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
     const state = get();
 
     if (state.levels) {
+      console.log("state.levels", state.levels);
       return state.levels;
     }
 
-    await state.fetchLevels(session, teacherId);
+    await get().fetchLevels(session, teacherId);
     return get().levels!;
   },
 

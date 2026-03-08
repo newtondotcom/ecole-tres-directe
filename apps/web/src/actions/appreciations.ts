@@ -45,6 +45,8 @@ export async function fetchAppreciationsData({
 }: FetchAppreciationsParams): Promise<AppreciationsServerResult> {
   const classSummary = await findFirstPrincipalClass(session, account.id);
 
+  console.log("classSummary", classSummary);
+
   const council = await teacherClassCouncil(
     session,
     account.id,
@@ -78,14 +80,14 @@ export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number,
 ): Promise<PrincipalClassSummary> {
-  const { getLevels } = useLevelsStore();
+  const { getLevels } = useLevelsStore.getState();
   const levels = await getLevels(session, teacherId);
-
+  console.log("levels from findFirstPrincipalClass", levels);
   for (const school of levels.schools) {
     for (const level of school.levels) {
       for (const classItem of level.classes) {
         if (!classItem.isCurrentUserPrincipal) continue;
-        const period = classItem.periods[0];
+        const period = classItem.periods[1];
         if (!period) continue;
         return {
           schoolName: school.label,
@@ -108,9 +110,10 @@ export async function buildStudentRecap(
 ): Promise<StudentRecap> {
   try {
     const gradesResponse = await teacherGrades(session, student.id, "");
-    const period = findPeriodWithSummary(gradesResponse);
-    const periodName = period?.name ?? "Période inconnue";
-    const subjects = period?.subjectsSummary?.subjects ?? [];
+    const periodsWithSummary = findPeriodsWithSummary(gradesResponse);
+    const lastPeriod = periodsWithSummary[1];
+    const periodName = lastPeriod?.name ?? "Période inconnue";
+    const subjects = lastPeriod?.subjectsSummary?.subjects ?? [];
 
     const formattedSubjects: SubjectAppreciation[] = subjects.map((subject) => ({
       subjectName: subject.name,
@@ -135,6 +138,6 @@ export async function buildStudentRecap(
   }
 }
 
-function findPeriodWithSummary(grades: TeacherGradesResponse) {
-  return grades.periods.find((period) => period.subjectsSummary);
+function findPeriodsWithSummary(grades: TeacherGradesResponse) {
+  return grades.periods.filter((period) => period.subjectsSummary);
 }
