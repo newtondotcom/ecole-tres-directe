@@ -1,14 +1,14 @@
 export const FIREFOX_UPDATE_URL =
-  "https://raw.githubusercontent.com/newtondotcom/etd-Unblock/refs/heads/main/updates.json";
-
+  "https://raw.githubusercontent.com/newtondotcom/ecole-tres-directe-Unblock/refs/heads/main/updates.json";
+const JSON_KEY = "{etdu-firefox-self-host@ecole-tres-directe.eu}";
 export const FIREFOX_STORE_URL = "https://www.firefox.com/fr/";
 
 export async function getFirefoxExtensionLatestVersion() {
   try {
     const response = await fetch(FIREFOX_UPDATE_URL);
     const data = await response.json();
-    return data.addons["{etdu-firefox-self-host@etd.eu}"].updates[
-      data.addons["{etdu-firefox-self-host@etd.eu}"].updates.length - 1
+    return data.addons[JSON_KEY].updates[
+      data.addons[JSON_KEY].updates.length - 1
     ].version;
   } catch (error) {
     console.error("Failed to fetch Firefox extension latest version:", error);
@@ -20,7 +20,7 @@ export async function getFirefoxExtensionLatestUpdateLink() {
   try {
     const response = await fetch(FIREFOX_UPDATE_URL);
     const data = await response.json();
-    const updates = data.addons["{etdu-firefox-self-host@etd.eu}"].updates;
+    const updates = data.addons[JSON_KEY].updates;
     return updates[updates.length - 1].update_link;
   } catch (error) {
     console.error("Failed to fetch Firefox URL:", error);
