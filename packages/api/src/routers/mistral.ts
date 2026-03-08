@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../index";
-import { env } from "@ecole-tres-directe/env/server";
+import { env } from "@etd/env/server";
 
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 

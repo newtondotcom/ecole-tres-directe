@@ -1,4 +1,4 @@
-import { env } from "@ecole-tres-directe/env/server";
+import { env } from "@etd/env/server";
 
 type DiscordWebhookMessage = {
   content?: string;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../index";
-import { env } from "@ecole-tres-directe/env/server";
+import { env } from "@etd/env/server";
 
 const feedbackInputSchema = z.object({
   message: z.string().min(1, "Le message est obligatoire").max(2000),
