@@ -142,8 +142,8 @@ function RouteComponent() {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-10 relative z-10">
       <div className={cn("w-full max-w-3xl flex flex-col gap-6 relative z-10")}>
-        <Card className="overflow-hidden">
-          <CardContent className="grid p-0 md:grid-cols-2">
+        <Card className="overflow-hidden group">
+          <CardContent className="grid p-0 md:grid-cols-2 md:items-stretch">
             <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Connexion etd</h1>
@@ -260,11 +260,11 @@ function RouteComponent() {
                 </div>
               )}
             </form>
-            <div className="bg-muted relative hidden md:block">
+            <div className="relative hidden h-full overflow-hidden md:block">
               <img
                 src="/etd.svg"
                 alt="Ecole Très Directe"
-                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.3]"
+                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.3] transition-transform duration-700 ease-out group-hover:scale-105 group-hover:translate-y-1 pr-4 "
               />
             </div>
           </CardContent>
