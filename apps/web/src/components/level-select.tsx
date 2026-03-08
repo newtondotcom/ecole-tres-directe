@@ -54,7 +54,7 @@ export function LevelSelect() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <button className="flex items-center gap-1" accessKey="niveaux">
                 {selectedLevel?.label ?? "Sélectionner un niveau"}
                 <ChevronDownIcon className="size-3.5" />
@@ -76,7 +76,7 @@ export function LevelSelect() {
         </BreadcrumbSeparator>
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <button
                 className="flex items-center gap-1"
                 accessKey="classes"

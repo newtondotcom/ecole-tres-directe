@@ -412,7 +412,7 @@ function RemplirAppreciationsComponent() {
                     </CardContent>
                     <CardFooter className="flex flex-wrap items-center justify-end gap-3">
                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                        <AlertDialogTrigger>
                           <Button type="button" variant="destructive" disabled={isBatching}>
                             {isBatching
                               ? "Génération et remplissage de tous les élèves..."
@@ -430,7 +430,7 @@ function RemplirAppreciationsComponent() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction asChild>
+                            <AlertDialogAction>
                               <Button
                                 type="button"
                                 disabled={isBatching}

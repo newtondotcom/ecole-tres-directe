@@ -139,8 +139,8 @@ export default function DashboardLayout() {
               <SidebarMenu>
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <Link to={item.url}>
+                    <SidebarMenuButton isActive={pathname === item.url}>
+                      <Link to={item.url} className="w-full flex flex-row items-center gap-2" >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
@@ -155,7 +155,7 @@ export default function DashboardLayout() {
           <SidebarMenu>
             <SidebarMenuItem>
               {isPatreonSubscribed !== undefined && (
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton>
                   <a href={PATREON_URL} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-center cursor-pointer">
                       {isPatreonSubscribed ? (

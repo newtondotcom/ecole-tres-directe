@@ -121,7 +121,7 @@ function etdUnblockComponent({
 
       {/* Header navigation */}
       <div className="absolute top-6 left-6 z-10">
-        <Button variant="ghost" asChild>
+        <Button variant="ghost">
           <Link to="/" className="flex items-center gap-2">
             <span>←</span>
             <span>Retour</span>
@@ -132,7 +132,7 @@ function etdUnblockComponent({
       {/* Social links */}
       {/*
       <div className="absolute top-6 right-6 z-10 flex items-center gap-4">
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="ghost" size="sm">
           <a
             href="https://discord.gg/ecole-directe-plus"
             target="_blank"
@@ -142,7 +142,7 @@ function etdUnblockComponent({
             Discord
           </a>
         </Button>
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="ghost" size="sm">
           <a
             href="https://github.com/newtondotcom/etd-Unblock"
             target="_blank"
@@ -157,7 +157,7 @@ function etdUnblockComponent({
 
       {/* Help link */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
-        <Button variant="ghost" asChild>
+        <Button variant="ghost">
           <Link to="/dashboard/feedback" className="text-sm">
             Besoin d&apos;aide ?
           </Link>
