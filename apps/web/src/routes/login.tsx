@@ -254,7 +254,7 @@ function RouteComponent() {
                     etd Unblock n&apos;a pas été détecté. Installez l&apos;extension sur Firefox
                     pour continuer.
                   </p>
-                  <Button asChild variant="outline" size="sm">
+                  <Button variant="outline" size="sm">
                     <Link to="/etd-unblock">Installer etd Unblock</Link>
                   </Button>
                 </div>
