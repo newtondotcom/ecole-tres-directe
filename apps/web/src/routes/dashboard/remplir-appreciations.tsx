@@ -159,7 +159,7 @@ function RemplirAppreciationsComponent() {
                         </Link>{" "}
                         avant de lancer la récupération.
                       </p>
-                      <Button  variant="outline" size="sm">
+                      <Button variant="outline" size="sm">
                         <Link to="/login">Aller à la page de connexion</Link>
                       </Button>
                     </div>

@@ -9,13 +9,14 @@ import { env } from "@etd/env/server";
 
 const app = new Hono();
 
-console.log(env.CORS_ORIGIN);
+const corsOrigins = env.CORS_ORIGINS.split(",");
+console.log(corsOrigins);
 
 app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: corsOrigins,
     allowMethods: ["GET", "POST", "OPTIONS"],
   }),
 );

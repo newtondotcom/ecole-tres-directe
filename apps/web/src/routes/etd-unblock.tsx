@@ -227,7 +227,6 @@ function etdUnblockComponent({
 
               <div className="flex justify-center pt-4">
                 <Button
-                  
                   size="lg"
                   variant={
                     isetdUnblockActuallyInstalled
@@ -273,7 +272,7 @@ function etdUnblockComponent({
 
           {/* About button */}
           <div className="flex justify-center">
-            <Button variant="ghost"  className="flex flex-col items-center gap-2">
+            <Button variant="ghost" className="flex flex-col items-center gap-2">
               <Link
                 ref={aboutButtonRef}
                 to="/etd-unblock"
