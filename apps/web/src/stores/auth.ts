@@ -57,7 +57,7 @@ export const useAuthStore = create<AuthStore>()(
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
           try {
-            const result = await trpcClient.checkPatreonSubscription.mutate({
+            const result = await trpcClient.patreon.checkPatreonSubscription.mutate({
               accountId: account.id,
               firstName: account.firstName,
               lastName: account.lastName,
@@ -110,7 +110,7 @@ export const useAuthStore = create<AuthStore>()(
           // Check Patreon subscription (non-blocking - allow login even if check fails)
           let isPatreonSubscribed = false;
           try {
-            const result = await trpcClient.checkPatreonSubscription.mutate({
+            const result = await trpcClient.patreon.checkPatreonSubscription.mutate({
               accountId: account.id,
               firstName: account.firstName,
               lastName: account.lastName,

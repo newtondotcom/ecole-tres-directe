@@ -1,7 +1,7 @@
 import { publicProcedure, router } from "../index";
 import { mistralRouter } from "./mistral";
-import { checkPatreonSchema, checkPatreonSubscription } from "../lib/check-patreon";
 import { feedbackRouter } from "./feedback";
+import { patreonRouter } from "./patreon";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -9,10 +9,6 @@ export const appRouter = router({
   }),
   mistral: mistralRouter,
   feedback: feedbackRouter,
-  checkPatreonSubscription: publicProcedure
-    .input(checkPatreonSchema)
-    .mutation(async ({ input }) => {
-      return await checkPatreonSubscription(input);
-    }),
+  patreon: patreonRouter,
 });
 export type AppRouter = typeof appRouter;
