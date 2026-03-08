@@ -10,50 +10,49 @@ const feedbackInputSchema = z.object({
 });
 
 export const feedbackRouter = router({
-  submit: publicProcedure
-    .input(feedbackInputSchema)
-    .mutation(async ({ input }) => {
-      const webhookUrl = env.DISCORD_WEBHOOK_URL;
-      const lines: string[] = [];
+  submit: publicProcedure.input(feedbackInputSchema).mutation(async ({ input }) => {
+    const webhookUrl = env.DISCORD_WEBHOOK_URL;
+    const lines: string[] = [];
 
-      lines.push(`**Nouveau feedback ${env.NODE_ENV === "production" ? "Ecole Très Directe" : "Ecole Très Directe (DEV)"}**`);
-      if (input.accountName || input.accountId) {
-        lines.push(
-          `Auteur: ${input.accountName ?? "Inconnu"}${
-            input.accountId ? ` (ID: ${input.accountId})` : ""
-          }`,
-        );
-      } else {
-        lines.push("Auteur: Anonyme ou non connecté");
-      }
+    lines.push(
+      `**Nouveau feedback ${env.NODE_ENV === "production" ? "Ecole Très Directe" : "Ecole Très Directe (DEV)"}**`,
+    );
+    if (input.accountName || input.accountId) {
+      lines.push(
+        `Auteur: ${input.accountName ?? "Inconnu"}${
+          input.accountId ? ` (ID: ${input.accountId})` : ""
+        }`,
+      );
+    } else {
+      lines.push("Auteur: Anonyme ou non connecté");
+    }
 
-      if (input.page) {
-        lines.push(`Page: \`${input.page}\``);
-      }
+    if (input.page) {
+      lines.push(`Page: \`${input.page}\``);
+    }
 
-      lines.push("");
-      lines.push(input.message);
+    lines.push("");
+    lines.push(input.message);
 
-      const payload = {
-        content: lines.join("\n"),
-      };
+    const payload = {
+      content: lines.join("\n"),
+    };
 
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(
-          `Impossible d'envoyer le feedback au webhook Discord (code ${response.status}): ${text}`,
-        );
-      }
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `Impossible d'envoyer le feedback au webhook Discord (code ${response.status}): ${text}`,
+      );
+    }
 
-      return { success: true };
-    }),
+    return { success: true };
+  }),
 });
-

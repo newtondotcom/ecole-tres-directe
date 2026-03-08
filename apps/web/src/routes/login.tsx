@@ -146,7 +146,7 @@ function RouteComponent() {
           <CardContent className="grid p-0 md:grid-cols-2 md:items-stretch">
             <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Connexion etd</h1>
+                <h1 className="text-2xl font-bold">Connexion Ecole Tres Directe</h1>
                 <p className="text-muted-foreground text-sm">{helperMessage}</p>
               </div>
               {isValidatingSession ? (

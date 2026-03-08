@@ -159,7 +159,7 @@ function RemplirAppreciationsComponent() {
                         </Link>{" "}
                         avant de lancer la récupération.
                       </p>
-                      <Button asChild variant="outline" size="sm">
+                      <Button  variant="outline" size="sm">
                         <Link to="/login">Aller à la page de connexion</Link>
                       </Button>
                     </div>
@@ -259,7 +259,7 @@ function RemplirAppreciationsComponent() {
                       <CardTitle>Génération des appréciations générales</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      <Accordion type="single" collapsible className="w-full">
+                      <Accordion className="w-full">
                         <AccordionItem value="prompt">
                           <AccordionTrigger>Consigne pour la rédaction</AccordionTrigger>
                           <AccordionContent>

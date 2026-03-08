@@ -1,6 +1,6 @@
 import { sendDiscordMessage } from "./discord-webhook";
 import { z } from "zod";
-import { env } from "@ecole-tres-directe/env/server";
+import { env } from "@etd/env/server";
 
 export type CheckPatreonParams = {
   accountId: number;

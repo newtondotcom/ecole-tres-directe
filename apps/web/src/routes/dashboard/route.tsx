@@ -140,7 +140,7 @@ export default function DashboardLayout() {
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton isActive={pathname === item.url}>
-                      <Link to={item.url} className="w-full flex flex-row items-center gap-2" >
+                      <Link to={item.url} className="w-full flex flex-row items-center gap-2">
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>

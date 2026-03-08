@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@etd/ui/lib/utils";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -31,7 +31,7 @@ export function HoverBorderGradient({
     const nextIndex = clockwise
       ? (currentIndex - 1 + directions.length) % directions.length
       : (currentIndex + 1) % directions.length;
-    return directions[nextIndex];
+    return directions[nextIndex] as Direction;
   };
 
   const movingMap: Record<Direction, string> = {

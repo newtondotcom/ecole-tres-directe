@@ -17,7 +17,7 @@ function DashboardIndexComponent() {
         <h2 className="text-2xl font-bold">
           De nouvelles fonctionnalités sont en cours de développement
         </h2>
-        <ul className="text-muted-foreground mt-2">
+        <ul className="text-muted-foreground mt-2 list-disc list-inside">
           <li>
             Relecture des appréciations pour vérifier la cohérence de la ponctuation, des
             éventuelles fautes d'orthographe, l'utilisation d'un mauvais prénom etc.

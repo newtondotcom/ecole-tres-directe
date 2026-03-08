@@ -7,9 +7,7 @@ export async function getFirefoxExtensionLatestVersion() {
   try {
     const response = await fetch(FIREFOX_UPDATE_URL);
     const data = await response.json();
-    return data.addons[JSON_KEY].updates[
-      data.addons[JSON_KEY].updates.length - 1
-    ].version;
+    return data.addons[JSON_KEY].updates[data.addons[JSON_KEY].updates.length - 1].version;
   } catch (error) {
     console.error("Failed to fetch Firefox extension latest version:", error);
     return undefined;

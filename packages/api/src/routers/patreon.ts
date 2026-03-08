@@ -8,4 +8,3 @@ export const patreonRouter = router({
       return await checkPatreonSubscription(input);
     }),
 });
-

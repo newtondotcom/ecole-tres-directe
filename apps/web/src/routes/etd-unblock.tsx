@@ -227,14 +227,14 @@ function etdUnblockComponent({
 
               <div className="flex justify-center pt-4">
                 <Button
-                  asChild
+                  
                   size="lg"
                   variant={
                     isetdUnblockActuallyInstalled
                       ? "secondary"
                       : compatibilityCondition
                         ? "outline"
-                        : "primary"
+                        : "default"
                   }
                   disabled={compatibilityCondition && !url}
                   className="min-w-[280px] h-auto py-6 flex flex-col items-center gap-3"
@@ -273,7 +273,7 @@ function etdUnblockComponent({
 
           {/* About button */}
           <div className="flex justify-center">
-            <Button variant="ghost" asChild className="flex flex-col items-center gap-2">
+            <Button variant="ghost"  className="flex flex-col items-center gap-2">
               <Link
                 ref={aboutButtonRef}
                 to="/etd-unblock"

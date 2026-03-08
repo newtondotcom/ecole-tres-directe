@@ -35,16 +35,16 @@ function FeedbackComponent() {
         message,
         page: router.state.location.pathname,
         accountId: account?.id,
-        accountName: account ? `${account.firstName} ${account.lastName} @ ${account.schoolName}` : undefined,
+        accountName: account
+          ? `${account.firstName} ${account.lastName} @ ${account.schoolName}`
+          : undefined,
       });
 
       setSuccess(true);
       setMessage("");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Impossible d'envoyer le feedback pour le moment.",
+        err instanceof Error ? err.message : "Impossible d'envoyer le feedback pour le moment.",
       );
     } finally {
       setIsSubmitting(false);
