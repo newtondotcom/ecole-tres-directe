@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../index";
+import { env } from "@ecole-tres-directe/env/server";
 
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 
@@ -185,7 +186,7 @@ export const mistralRouter = router({
   generateAppreciation: publicProcedure
     .input(generateAppreciationInputSchema)
     .mutation(async ({ input }) => {
-      const apiKey = process.env.MISTRAL_API_KEY;
+      const apiKey = env.MISTRAL_API_KEY;
 
       if (!apiKey) {
         throw new Error("La clé MISTRAL_API_KEY est manquante dans les variables d'environnement.");

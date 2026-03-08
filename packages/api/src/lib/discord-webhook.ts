@@ -1,3 +1,5 @@
+import { env } from "@ecole-tres-directe/env/server";
+
 type DiscordWebhookMessage = {
   content?: string;
   username?: string;
@@ -31,14 +33,7 @@ export async function sendDiscordMessage({
   avatar_url,
   embeds,
 }: SendDiscordMessageParams) {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-
-  if (!webhookUrl) {
-    const error = new Error(
-      "DISCORD_WEBHOOK_URL n'est pas configurée dans les variables d'environnement.",
-    );
-    throw error;
-  }
+  const webhookUrl = env.DISCORD_WEBHOOK_URL;
 
   if (!content && !embeds?.length) {
     const error = new Error("Le message doit contenir au moins un contenu ou un embed.");

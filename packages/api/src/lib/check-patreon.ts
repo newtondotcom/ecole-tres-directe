@@ -1,5 +1,6 @@
 import { sendDiscordMessage } from "./discord-webhook";
 import { z } from "zod";
+import { env } from "@ecole-tres-directe/env/server";
 
 export type CheckPatreonParams = {
   accountId: number;
@@ -27,13 +28,13 @@ export async function checkPatreonSubscription({
   // For now, just send user info to Discord
   // TODO: Add actual Patreon subscription check via Patreon API
   const isSubscribed = false;
-
+  const ENV = env.NODE_ENV;
   // Send Discord notification
   try {
     await sendDiscordMessage({
       embeds: [
         {
-          title: "🔍 Vérification abonnement Patreon",
+          title: `${ENV === "production" ? "🔍 Vérification abonnement Patreon" : "🔍 Vérification abonnement Patreon (DEV)"}`,
           description: "Un enseignant a tenté de vérifier son abonnement Patreon",
           color: isSubscribed ? 0x00ff00 : 0xff9900, // Green if subscribed, orange if not
           fields: [
@@ -69,7 +70,7 @@ export async function checkPatreonSubscription({
             },
           ],
           footer: {
-            text: "Ecole Tres Directe - Patreon Check",
+            text: `${ENV === "production" ? "Ecole Tres Directe" : "Ecole Tres Directe (DEV)"} - Patreon Check`,
           },
           timestamp: new Date().toISOString(),
         },

@@ -5,16 +5,17 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { appRouter } from "@etd/api/routers/index";
 import { createContext } from "@etd/api/context";
+import { env } from "@etd/env/server";
 
 const app = new Hono();
 
-console.log(process.env.CORS_ORIGIN);
+console.log(env.CORS_ORIGIN);
 
 app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: process.env.CORS_ORIGIN || "",
+    origin: env.CORS_ORIGIN,
     allowMethods: ["GET", "POST", "OPTIONS"],
   }),
 );
