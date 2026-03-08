@@ -15,7 +15,7 @@ function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; path=/; max-age=${DEVICE_UUID_MAX_AGE}; samesite=lax`;
 }
 
-export function getDeviceUuid() {
+export function getdeviceUuid() {
   const existing = readCookie(DEVICE_UUID_COOKIE);
   if (existing) return existing;
   const created = uuidv4();
@@ -26,7 +26,7 @@ export function getDeviceUuid() {
 export async function loginUsingCredentials(username: string, password: string) {
   try {
     console.info("Initializing a session using credentials...");
-    const session: Session = { username, device_uuid: getDeviceUuid() };
+    const session: Session = { username, device_uuid: getdeviceUuid() };
 
     const accounts = await login(session, password).catch(async (error) => {
       // Handle double authentication, if required.

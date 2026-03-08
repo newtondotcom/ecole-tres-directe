@@ -1,9 +1,9 @@
-import { Background } from "@/components/ui/background-components";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { Background } from "@etd/ui/components/background-components";
+import { Button } from "@etd/ui/components/button";
+import { Card, CardContent } from "@etd/ui/components/card";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@etd/ui/components/field";
+import { Checkbox } from "@etd/ui/components/checkbox";
+import { Input } from "@etd/ui/components/input";
 import { useAuthStore } from "@/stores/auth";
 import { useUnblockStatus } from "@/hooks/use-unblock-status";
 import { cn } from "@/lib/utils";
@@ -49,7 +49,7 @@ function RouteComponent() {
     }
 
     setError(null);
-    setStatus("Initialisation avec ETD Unblock…");
+    setStatus("Initialisation avec etd Unblock…");
     setIsSubmitting(true);
 
     try {
@@ -70,14 +70,14 @@ function RouteComponent() {
   const setupGtkToken = useCallback(async () => {
     if (!extensionDetected) {
       throw new Error(
-        "L'extension ETD Unblock n'a pas été détectée. Installez-la avant de continuer.",
+        "L'extension etd Unblock n'a pas été détectée. Installez-la avant de continuer.",
       );
     }
 
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         window.removeEventListener("message", handleGtkMessage);
-        reject(new Error("Aucune réponse de l'extension ETD Unblock."));
+        reject(new Error("Aucune réponse de l'extension etd Unblock."));
       }, 5000);
 
       function cleanup() {
@@ -111,7 +111,7 @@ function RouteComponent() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    setStatus("Initialisation avec ETD Unblock…");
+    setStatus("Initialisation avec etd Unblock…");
     setIsSubmitting(true);
 
     try {
@@ -131,7 +131,7 @@ function RouteComponent() {
 
   const helperMessage = useMemo(() => {
     if (!extensionDetected) {
-      return "Installez ETD Unblock dans Firefox et revenez sur cette page.";
+      return "Installez etd Unblock dans Firefox et revenez sur cette page.";
     }
     if (isSubmitting) {
       return status ?? "Connexion en cours…";
@@ -146,7 +146,7 @@ function RouteComponent() {
           <CardContent className="grid p-0 md:grid-cols-2">
             <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Connexion ETD</h1>
+                <h1 className="text-2xl font-bold">Connexion etd</h1>
                 <p className="text-muted-foreground text-sm">{helperMessage}</p>
               </div>
               {isValidatingSession ? (
@@ -251,11 +251,11 @@ function RouteComponent() {
               {!extensionDetected && (
                 <div className="space-y-3 rounded-md border border-dashed border-amber-400 bg-amber-50 px-3 py-2 text-center text-sm text-amber-700">
                   <p>
-                    ETD Unblock n&apos;a pas été détecté. Installez l&apos;extension sur Firefox
+                    etd Unblock n&apos;a pas été détecté. Installez l&apos;extension sur Firefox
                     pour continuer.
                   </p>
                   <Button asChild variant="outline" size="sm">
-                    <Link to="/etd-unblock">Installer ETD Unblock</Link>
+                    <Link to="/etd-unblock">Installer etd Unblock</Link>
                   </Button>
                 </div>
               )}

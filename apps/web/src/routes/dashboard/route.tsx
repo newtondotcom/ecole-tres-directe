@@ -15,8 +15,8 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Calendar } from "@/components/ui/calendar";
+} from "@etd/ui/components/sidebar";
+import { Calendar } from "@etd/ui/components/calendar";
 import {
   FileText,
   Home,

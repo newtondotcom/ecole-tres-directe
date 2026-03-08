@@ -1,41 +1,53 @@
 {
-  "name": "ecole-tres-directe",
+  "name": "etd",
   "private": true,
-  "type": "module",
   "workspaces": {
     "packages": [
       "apps/*",
       "packages/*"
     ],
     "catalog": {
-      "hono": "^4.8.2",
-      "@trpc/server": "^11.5.0",
       "dotenv": "^17.2.2",
-      "@trpc/client": "^11.5.0"
+      "zod": "^4.1.13",
+      "@types/bun": "^1.3.4",
+      "hono": "^4.8.2",
+      "@trpc/server": "^11.7.2",
+      "lucide-react": "^0.546.0",
+      "next-themes": "^0.4.6",
+      "react": "^19.2.3",
+      "react-dom": "^19.2.3",
+      "sonner": "^2.0.5",
+      "@trpc/client": "^11.7.2",
+      "@types/react": "^19.2.10",
+      "@types/react-dom": "^19.2.3",
+      "tailwindcss": "^4.1.18"
     }
   },
+  "type": "module",
   "scripts": {
-    "check": "oxlint && oxfmt --write",
-    "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
-    "compile:server": "turbo -F server compile"
+    "compile:server": "turbo -F server compile",
+    "check": "oxlint && oxfmt --write",
+    "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only"
   },
   "dependencies": {
-    "dotenv": "^17.3.1",
-    "zod": "^4.3.6"
+    "@etd/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@etd/config": "workspace:*",
     "@intellectronica/ruler": "^0.3.35",
     "@tailwindcss/typography": "^0.5.19",
-    "@types/bun": "^1.3.10",
-    "oxfmt": "^0.27.0",
-    "oxlint": "^1.51.0",
-    "turbo": "^2.8.14"
+    "@types/bun": "catalog:",
+    "oxfmt": "^0.26.0",
+    "oxlint": "^1.41.0",
+    "turbo": "^2.8.12",
+    "typescript": "^5"
   },
   "packageManager": "bun@1.3.3"
 }

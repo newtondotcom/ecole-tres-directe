@@ -1,6 +1,6 @@
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
-import { ShootingStars } from "@/components/ui/shooting-stars";
-import { StarsBackground } from "@/components/ui/stars-background";
+import { HoverBorderGradient } from "@etd/ui/components/hover-border-gradient";
+import { ShootingStars } from "@etd/ui/components/shooting-stars";
+import { StarsBackground } from "@etd/ui/components/stars-background";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({

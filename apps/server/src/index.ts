@@ -3,8 +3,8 @@ import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { appRouter } from "@ecole-tres-directe/api/routers/index";
-import { createContext } from "@ecole-tres-directe/api/context";
+import { appRouter } from "@etd/api/routers/index";
+import { createContext } from "@etd/api/context";
 
 const app = new Hono();
 

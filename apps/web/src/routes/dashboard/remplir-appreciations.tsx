@@ -6,9 +6,9 @@ import { useMutation } from "@tanstack/react-query";
 
 import { type Step, useAppreciationsStore } from "@/stores/appreciations";
 import { useAuthStore } from "@/stores/auth";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@etd/ui/components/button";
+import { Label } from "@etd/ui/components/label";
+import { Textarea } from "@etd/ui/components/textarea";
 import {
   Card,
   CardContent,
@@ -16,20 +16,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@etd/ui/components/card";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@etd/ui/components/accordion";
 import { generateBatchAppreciations } from "@/actions/generate-appreciation";
 import { updateStudentAppreciation } from "@/actions/update-appreciation";
 import type { GeneratedAppreciation, SubjectAppreciation } from "@/types/appreciations";
 import { DEFAULT_APPRECIATION, DEFAULT_PROMPT } from "@/actions/appreciations";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { trpcClient } from "@/utils/trpc";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@etd/ui/components/scroll-area";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -40,7 +40,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+} from "@etd/ui/components/alert-dialog";
 
 const STEP_LABELS: Record<Step, string> = {
   idle: "En attente",

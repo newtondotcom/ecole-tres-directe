@@ -1,4 +1,4 @@
-import { LevelSelect } from "@/components/etd/level-select";
+import { LevelSelect } from "@/components/level-select";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/correction-appreciations")({

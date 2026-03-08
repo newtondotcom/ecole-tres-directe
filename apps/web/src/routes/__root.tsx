@@ -1,12 +1,12 @@
-import { ThemeProvider } from "@/components/etd/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@etd/ui/components/sonner";
 import type { trpc } from "@/utils/trpc";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
-import { UnblockListener } from "@/components/etd/unblock-listener";
+import { UnblockListener } from "@/components/unblock-listener";
 
 export interface RouterAppContext {
   trpc: typeof trpc;

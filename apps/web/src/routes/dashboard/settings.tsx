@@ -1,4 +1,4 @@
-import { ModeToggle } from "@/components/etd/theme-toggle";
+import { ModeToggle } from "@/components/theme-toggle";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/settings")({

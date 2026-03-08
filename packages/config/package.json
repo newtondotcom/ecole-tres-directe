@@ -1,5 +1,5 @@
 {
-	"name": "@ecole-tres-directe/config",
-	"version": "0.0.0",
-	"private": true
+  "name": "@etd/config",
+  "version": "0.0.0",
+  "private": true
 }

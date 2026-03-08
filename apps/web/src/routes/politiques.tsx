@@ -244,7 +244,7 @@ function PolicyComponent() {
         <li>
           Curieux et motivé ? Rejoignez nous et participez au développement d'Ecole Tres Directe à
           travers le{" "}
-          <a href="https://github.com/newtondotcom/ecole-tres-directe" target="blank">
+          <a href="https://github.com/newtondotcom/etd" target="blank">
             dépôt Github
           </a>
           .
@@ -270,11 +270,8 @@ function PolicyComponent() {
         </li>
         <li style={{ listStyle: "none", marginBlock: "2px 20px" }}>
           Nous contacter :{" "}
-          <a
-            href="mailto:contact@ecole-tres-directe.eu "
-            style={{ color: "rgb(var(--text-color-alt))" }}
-          >
-            contact@ecole-tres-directe.eu{" "}
+          <a href="mailto:contact@etd.eu " style={{ color: "rgb(var(--text-color-alt))" }}>
+            contact@etd.eu{" "}
           </a>
         </li>
         <li id="copyleft-container">

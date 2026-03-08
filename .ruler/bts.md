@@ -1,6 +1,6 @@
 # Better-T-Stack Project Rules
 
-This is a ecole-tres-directe project created with Better-T-Stack CLI.
+This is a etd project created with Better-T-Stack CLI.
 
 ## Project Structure
 
@@ -12,19 +12,16 @@ This is a monorepo with the following structure:
 
 - **`packages/api/`** - Shared API logic and types
 
-
 ## Available Scripts
 
 - `bun run dev` - Start all apps in development mode
 - `bun run dev:web` - Start only the web app
 - `bun run dev:server` - Start only the server
 
-
 ## API Structure
 
 - tRPC routers are in `apps/server/src/routers/`
 - Client-side tRPC utils are in `apps/web/src/utils/trpc.ts`
-
 
 ## Adding More Features
 
@@ -36,6 +33,7 @@ add
 ```
 
 Available addons you can add:
+
 - **Documentation**: Starlight, Fumadocs
 - **Linting**: Biome, Oxlint, Ultracite
 - **Other**: Ruler, Turborepo, PWA, Tauri, Husky
