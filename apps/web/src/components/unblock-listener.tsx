@@ -14,7 +14,7 @@ export function UnblockListener() {
     const latestVersion = await getFirefoxExtensionLatestVersion();
     if (version !== latestVersion) {
       toast.info(
-        `Une nouvelle version de l'extension etd Unblock est disponible. Veuillez la mettre à jour`,
+        `Une nouvelle version de l'extension ETD Unblock est disponible. Veuillez la mettre à jour`,
         {
           action: {
             label: "MàJ",
@@ -24,15 +24,15 @@ export function UnblockListener() {
       );
       return false;
     }
-    toast.success("L'extension etd Unblock est à jour.");
+    toast.success("L'extension ETD Unblock est à jour.");
     return true;
   }
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === "etd_UNBLOCK") {
+      if (event.data?.type === "ETD_UNBLOCK") {
         const version = event.data?.payload?.version;
-        console.info(`[etd Unblock] Extension détectée${version ? ` (v${version})` : ""}.`);
+        console.info(`[ETD Unblock] Extension détectée${version ? ` (v${version})` : ""}.`);
         setIsInstalled(true);
         document.body.dataset.etdUnblock = "installed";
         window.dispatchEvent(
