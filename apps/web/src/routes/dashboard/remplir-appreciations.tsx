@@ -65,6 +65,7 @@ export const Route = createFileRoute("/dashboard/remplir-appreciations")({
 });
 
 function RemplirAppreciationsComponent() {
+  const [openBatchDialog, setOpenBatchDialog] = useState(false);
   const {
     step,
     isLoading,
@@ -411,7 +412,7 @@ function RemplirAppreciationsComponent() {
                       </Accordion>
                     </CardContent>
                     <CardFooter className="flex flex-wrap items-center justify-end gap-3">
-                      <AlertDialog>
+                      <AlertDialog open={openBatchDialog} onOpenChange={setOpenBatchDialog}>
                         <AlertDialogTrigger>
                           <Button type="button" variant="destructive" disabled={isBatching}>
                             {isBatching
@@ -430,48 +431,44 @@ function RemplirAppreciationsComponent() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction>
-                              <Button
-                                type="button"
-                                disabled={isBatching}
-                                onClick={() => {
-                                  startBatchGeneration(async () => {
-                                    try {
-                                      // Reset results at the start
-                                      setBatchResults([]);
-                                      setBatchError(null);
+                            <AlertDialogAction
+                              disabled={isBatching}
+                              onClick={() => {
+                                setOpenBatchDialog(false);
+                                startBatchGeneration(async () => {
+                                  try {
+                                    // Reset results at the start
+                                    setBatchResults([]);
+                                    setBatchError(null);
 
-                                      const results = await generateBatchAppreciations({
-                                        prompt: promptInstruction,
-                                        userAppreciations: userAppreciations || undefined,
-                                        onProgress: (result) => {
-                                          // Add each result as it's generated
-                                          setBatchResults((prev) => {
-                                            if (!prev) return [result];
-                                            // Avoid duplicates
-                                            if (
-                                              prev.some((r) => r.studentId === result.studentId)
-                                            ) {
-                                              return prev;
-                                            }
-                                            return [...prev, result];
-                                          });
-                                        },
-                                      });
-                                      // Final update with all results (in case callback missed any)
-                                      setBatchResults(results);
-                                    } catch (error) {
-                                      const message =
-                                        error instanceof Error
-                                          ? error.message
-                                          : "Impossible de générer le lot d'appréciations.";
-                                      setBatchError(message);
-                                    }
-                                  });
-                                }}
-                              >
-                                Confirmer
-                              </Button>
+                                    const results = await generateBatchAppreciations({
+                                      prompt: promptInstruction,
+                                      userAppreciations: userAppreciations || undefined,
+                                      onProgress: (result) => {
+                                        // Add each result as it's generated
+                                        setBatchResults((prev) => {
+                                          if (!prev) return [result];
+                                          // Avoid duplicates
+                                          if (prev.some((r) => r.studentId === result.studentId)) {
+                                            return prev;
+                                          }
+                                          return [...prev, result];
+                                        });
+                                      },
+                                    });
+                                    // Final update with all results (in case callback missed any)
+                                    setBatchResults(results);
+                                  } catch (error) {
+                                    const message =
+                                      error instanceof Error
+                                        ? error.message
+                                        : "Impossible de générer le lot d'appréciations.";
+                                    setBatchError(message);
+                                  }
+                                });
+                              }}
+                            >
+                              Confirmer
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
