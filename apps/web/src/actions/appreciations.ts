@@ -87,7 +87,7 @@ export async function findFirstPrincipalClass(
     for (const level of school.levels) {
       for (const classItem of level.classes) {
         if (!classItem.isCurrentUserPrincipal) continue;
-        const period = classItem.periods[1];
+        const period = classItem.periods[2];
         if (!period) continue;
         return {
           schoolName: school.label,
@@ -111,7 +111,7 @@ export async function buildStudentRecap(
   try {
     const gradesResponse = await teacherGrades(session, student.id, "");
     const periodsWithSummary = findPeriodsWithSummary(gradesResponse);
-    const lastPeriod = periodsWithSummary[1];
+    const lastPeriod = periodsWithSummary[2];
     const periodName = lastPeriod?.name ?? "Période inconnue";
     const subjects = lastPeriod?.subjectsSummary?.subjects ?? [];
 

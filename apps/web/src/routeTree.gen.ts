@@ -8,232 +8,234 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as PolitiquesRouteImport } from "./routes/politiques";
-import { Route as LoginRouteImport } from "./routes/login";
-import { Route as EtdUnblockRouteImport } from "./routes/etd-unblock";
-import { Route as DashboardRouteRouteImport } from "./routes/dashboard/route";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as DashboardIndexRouteImport } from "./routes/dashboard/index";
-import { Route as DashboardSettingsRouteImport } from "./routes/dashboard/settings";
-import { Route as DashboardRemplirAppreciationsRouteImport } from "./routes/dashboard/remplir-appreciations";
-import { Route as DashboardFeedbackRouteImport } from "./routes/dashboard/feedback";
-import { Route as DashboardCorrectionAppreciationsRouteImport } from "./routes/dashboard/correction-appreciations";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PolitiquesRouteImport } from './routes/politiques'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as EtdUnblockRouteImport } from './routes/etd-unblock'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
+import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
+import { Route as DashboardCorrectionAppreciationsRouteImport } from './routes/dashboard/correction-appreciations'
 
 const PolitiquesRoute = PolitiquesRouteImport.update({
-  id: "/politiques",
-  path: "/politiques",
+  id: '/politiques',
+  path: '/politiques',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRoute = LoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const EtdUnblockRoute = EtdUnblockRouteImport.update({
-  id: "/etd-unblock",
-  path: "/etd-unblock",
+  id: '/etd-unblock',
+  path: '/etd-unblock',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
-  id: "/dashboard",
-  path: "/dashboard",
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => DashboardRouteRoute,
-} as any);
+} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => DashboardRouteRoute,
-} as any);
-const DashboardRemplirAppreciationsRoute = DashboardRemplirAppreciationsRouteImport.update({
-  id: "/remplir-appreciations",
-  path: "/remplir-appreciations",
-  getParentRoute: () => DashboardRouteRoute,
-} as any);
+} as any)
+const DashboardRemplirAppreciationsRoute =
+  DashboardRemplirAppreciationsRouteImport.update({
+    id: '/remplir-appreciations',
+    path: '/remplir-appreciations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardFeedbackRoute = DashboardFeedbackRouteImport.update({
-  id: "/feedback",
-  path: "/feedback",
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => DashboardRouteRoute,
-} as any);
-const DashboardCorrectionAppreciationsRoute = DashboardCorrectionAppreciationsRouteImport.update({
-  id: "/correction-appreciations",
-  path: "/correction-appreciations",
-  getParentRoute: () => DashboardRouteRoute,
-} as any);
+} as any)
+const DashboardCorrectionAppreciationsRoute =
+  DashboardCorrectionAppreciationsRouteImport.update({
+    id: '/correction-appreciations',
+    path: '/correction-appreciations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/dashboard": typeof DashboardRouteRouteWithChildren;
-  "/etd-unblock": typeof EtdUnblockRoute;
-  "/login": typeof LoginRoute;
-  "/politiques": typeof PolitiquesRoute;
-  "/dashboard/correction-appreciations": typeof DashboardCorrectionAppreciationsRoute;
-  "/dashboard/feedback": typeof DashboardFeedbackRoute;
-  "/dashboard/remplir-appreciations": typeof DashboardRemplirAppreciationsRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
+  '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/etd-unblock': typeof EtdUnblockRoute
+  '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/etd-unblock": typeof EtdUnblockRoute;
-  "/login": typeof LoginRoute;
-  "/politiques": typeof PolitiquesRoute;
-  "/dashboard/correction-appreciations": typeof DashboardCorrectionAppreciationsRoute;
-  "/dashboard/feedback": typeof DashboardFeedbackRoute;
-  "/dashboard/remplir-appreciations": typeof DashboardRemplirAppreciationsRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard": typeof DashboardIndexRoute;
+  '/': typeof IndexRoute
+  '/etd-unblock': typeof EtdUnblockRoute
+  '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/dashboard": typeof DashboardRouteRouteWithChildren;
-  "/etd-unblock": typeof EtdUnblockRoute;
-  "/login": typeof LoginRoute;
-  "/politiques": typeof PolitiquesRoute;
-  "/dashboard/correction-appreciations": typeof DashboardCorrectionAppreciationsRoute;
-  "/dashboard/feedback": typeof DashboardFeedbackRoute;
-  "/dashboard/remplir-appreciations": typeof DashboardRemplirAppreciationsRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/etd-unblock': typeof EtdUnblockRoute
+  '/login': typeof LoginRoute
+  '/politiques': typeof PolitiquesRoute
+  '/dashboard/correction-appreciations': typeof DashboardCorrectionAppreciationsRoute
+  '/dashboard/feedback': typeof DashboardFeedbackRoute
+  '/dashboard/remplir-appreciations': typeof DashboardRemplirAppreciationsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/dashboard"
-    | "/etd-unblock"
-    | "/login"
-    | "/politiques"
-    | "/dashboard/correction-appreciations"
-    | "/dashboard/feedback"
-    | "/dashboard/remplir-appreciations"
-    | "/dashboard/settings"
-    | "/dashboard/";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/dashboard'
+    | '/etd-unblock'
+    | '/login'
+    | '/politiques'
+    | '/dashboard/correction-appreciations'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
+    | '/dashboard/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/etd-unblock"
-    | "/login"
-    | "/politiques"
-    | "/dashboard/correction-appreciations"
-    | "/dashboard/feedback"
-    | "/dashboard/remplir-appreciations"
-    | "/dashboard/settings"
-    | "/dashboard";
+    | '/'
+    | '/etd-unblock'
+    | '/login'
+    | '/politiques'
+    | '/dashboard/correction-appreciations'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
+    | '/dashboard'
   id:
-    | "__root__"
-    | "/"
-    | "/dashboard"
-    | "/etd-unblock"
-    | "/login"
-    | "/politiques"
-    | "/dashboard/correction-appreciations"
-    | "/dashboard/feedback"
-    | "/dashboard/remplir-appreciations"
-    | "/dashboard/settings"
-    | "/dashboard/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/etd-unblock'
+    | '/login'
+    | '/politiques'
+    | '/dashboard/correction-appreciations'
+    | '/dashboard/feedback'
+    | '/dashboard/remplir-appreciations'
+    | '/dashboard/settings'
+    | '/dashboard/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
-  EtdUnblockRoute: typeof EtdUnblockRoute;
-  LoginRoute: typeof LoginRoute;
-  PolitiquesRoute: typeof PolitiquesRoute;
+  IndexRoute: typeof IndexRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  EtdUnblockRoute: typeof EtdUnblockRoute
+  LoginRoute: typeof LoginRoute
+  PolitiquesRoute: typeof PolitiquesRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/politiques": {
-      id: "/politiques";
-      path: "/politiques";
-      fullPath: "/politiques";
-      preLoaderRoute: typeof PolitiquesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/etd-unblock": {
-      id: "/etd-unblock";
-      path: "/etd-unblock";
-      fullPath: "/etd-unblock";
-      preLoaderRoute: typeof EtdUnblockRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/dashboard": {
-      id: "/dashboard";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof DashboardRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/dashboard/": {
-      id: "/dashboard/";
-      path: "/";
-      fullPath: "/dashboard/";
-      preLoaderRoute: typeof DashboardIndexRouteImport;
-      parentRoute: typeof DashboardRouteRoute;
-    };
-    "/dashboard/settings": {
-      id: "/dashboard/settings";
-      path: "/settings";
-      fullPath: "/dashboard/settings";
-      preLoaderRoute: typeof DashboardSettingsRouteImport;
-      parentRoute: typeof DashboardRouteRoute;
-    };
-    "/dashboard/remplir-appreciations": {
-      id: "/dashboard/remplir-appreciations";
-      path: "/remplir-appreciations";
-      fullPath: "/dashboard/remplir-appreciations";
-      preLoaderRoute: typeof DashboardRemplirAppreciationsRouteImport;
-      parentRoute: typeof DashboardRouteRoute;
-    };
-    "/dashboard/feedback": {
-      id: "/dashboard/feedback";
-      path: "/feedback";
-      fullPath: "/dashboard/feedback";
-      preLoaderRoute: typeof DashboardFeedbackRouteImport;
-      parentRoute: typeof DashboardRouteRoute;
-    };
-    "/dashboard/correction-appreciations": {
-      id: "/dashboard/correction-appreciations";
-      path: "/correction-appreciations";
-      fullPath: "/dashboard/correction-appreciations";
-      preLoaderRoute: typeof DashboardCorrectionAppreciationsRouteImport;
-      parentRoute: typeof DashboardRouteRoute;
-    };
+    '/politiques': {
+      id: '/politiques'
+      path: '/politiques'
+      fullPath: '/politiques'
+      preLoaderRoute: typeof PolitiquesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etd-unblock': {
+      id: '/etd-unblock'
+      path: '/etd-unblock'
+      fullPath: '/etd-unblock'
+      preLoaderRoute: typeof EtdUnblockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/remplir-appreciations': {
+      id: '/dashboard/remplir-appreciations'
+      path: '/remplir-appreciations'
+      fullPath: '/dashboard/remplir-appreciations'
+      preLoaderRoute: typeof DashboardRemplirAppreciationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/feedback': {
+      id: '/dashboard/feedback'
+      path: '/feedback'
+      fullPath: '/dashboard/feedback'
+      preLoaderRoute: typeof DashboardFeedbackRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/correction-appreciations': {
+      id: '/dashboard/correction-appreciations'
+      path: '/correction-appreciations'
+      fullPath: '/dashboard/correction-appreciations'
+      preLoaderRoute: typeof DashboardCorrectionAppreciationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
 interface DashboardRouteRouteChildren {
-  DashboardCorrectionAppreciationsRoute: typeof DashboardCorrectionAppreciationsRoute;
-  DashboardFeedbackRoute: typeof DashboardFeedbackRoute;
-  DashboardRemplirAppreciationsRoute: typeof DashboardRemplirAppreciationsRoute;
-  DashboardSettingsRoute: typeof DashboardSettingsRoute;
-  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardCorrectionAppreciationsRoute: typeof DashboardCorrectionAppreciationsRoute
+  DashboardFeedbackRoute: typeof DashboardFeedbackRoute
+  DashboardRemplirAppreciationsRoute: typeof DashboardRemplirAppreciationsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -242,11 +244,11 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardRemplirAppreciationsRoute: DashboardRemplirAppreciationsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-};
+}
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
   DashboardRouteRouteChildren,
-);
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -254,7 +256,7 @@ const rootRouteChildren: RootRouteChildren = {
   EtdUnblockRoute: EtdUnblockRoute,
   LoginRoute: LoginRoute,
   PolitiquesRoute: PolitiquesRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
