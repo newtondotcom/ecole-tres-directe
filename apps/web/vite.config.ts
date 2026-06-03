@@ -9,6 +9,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // pawdirecte-teacher imports node:buffer; map it to the browser polyfill
+      "node:buffer": "buffer",
+      buffer: "buffer",
     },
   },
 });

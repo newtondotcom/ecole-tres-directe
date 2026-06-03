@@ -1,3 +1,8 @@
+import { Buffer } from "buffer";
+
+// Required by pawdirecte-teacher (uses Node Buffer internally)
+globalThis.Buffer ??= Buffer;
+
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import Loader from "@/components/loader";
