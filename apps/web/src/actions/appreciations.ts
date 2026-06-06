@@ -15,6 +15,7 @@ import type {
   StudentSummary,
 } from "@/types/appreciations";
 import { useLevelsStore } from "@/stores/levels";
+import { getTrimesterLabel, getTrimesterPeriods, pickDefaultPeriod, TRIMESTER_COUNT, formatTrimesterLabel } from "@/lib/period";
 
 export const DEFAULT_APPRECIATION = `Un trimestre avec des résultats hétérogènes pour Adam. Vous produisez un travail sérieux manquant de régularité dans certaines disciplines. Vous avez montré une belle implication en classe soulignée par plusieurs professeurs, il faut maintenant l'étendre à toutes les disciplines. Allez Adam !
 Un deuxième trimestre dans la continuité du premier au niveau des résultats. La participation est active et Louis est davantage impliqué en classe. Cependant, des efforts sont toujours attendus quant à votre concentration et attitude qui se montrent trop fluctuantes. Le travail personnel est sérieux, mais se doit de gagner en rigueur afin de progresser.
@@ -45,8 +46,6 @@ export async function fetchAppreciationsData({
 }: FetchAppreciationsParams): Promise<AppreciationsServerResult> {
   const classSummary = await findFirstPrincipalClass(session, account.id);
 
-  console.log("classSummary", classSummary);
-
   const council = await teacherClassCouncil(
     session,
     account.id,
@@ -65,7 +64,11 @@ export async function fetchAppreciationsData({
     lastName: student.lastName,
   }));
 
-  const firstStudentRecap = await buildStudentRecap(session, council.students[0]);
+  const firstStudentRecap = await buildStudentRecap(
+    session,
+    council.students[0],
+    classSummary.periodCode,
+  );
 
   return {
     classSummary,
@@ -80,21 +83,34 @@ export async function findFirstPrincipalClass(
   session: Session,
   teacherId: number,
 ): Promise<PrincipalClassSummary> {
-  const { getLevels } = useLevelsStore.getState();
+  const { getLevels, selectedPeriod, setSelectedClass, setSelectedPeriod, setSelectedLevel, setSelectedSchool } =
+    useLevelsStore.getState();
   const levels = await getLevels(session, teacherId);
-  console.log("levels from findFirstPrincipalClass", levels);
+
   for (const school of levels.schools) {
     for (const level of school.levels) {
       for (const classItem of level.classes) {
         if (!classItem.isCurrentUserPrincipal) continue;
-        const period = classItem.periods[2];
+
+        const trimesterPeriods = getTrimesterPeriods(classItem.periods);
+        const period =
+          trimesterPeriods.find((item) => item.code === selectedPeriod?.code) ??
+          pickDefaultPeriod(classItem.periods);
+
         if (!period) continue;
+
+        setSelectedSchool(school);
+        setSelectedLevel(level);
+        setSelectedClass(classItem);
+        setSelectedPeriod(period);
+
         return {
           schoolName: school.label,
           levelName: level.label,
           classId: classItem.id,
           classLabel: classItem.label,
           periodCode: period.code,
+          periodName: getTrimesterLabel(period, classItem.periods),
         };
       }
     }
@@ -107,13 +123,23 @@ export async function findFirstPrincipalClass(
 export async function buildStudentRecap(
   session: Session,
   student: TeacherClassCouncilStudent,
+  periodCode?: string,
 ): Promise<StudentRecap> {
   try {
     const gradesResponse = await teacherGrades(session, student.id, "");
     const periodsWithSummary = findPeriodsWithSummary(gradesResponse);
-    const lastPeriod = periodsWithSummary[2];
-    const periodName = lastPeriod?.name ?? "Période inconnue";
-    const subjects = lastPeriod?.subjectsSummary?.subjects ?? [];
+    const { selectedClass } = useLevelsStore.getState();
+    const trimesterPeriods = selectedClass ? getTrimesterPeriods(selectedClass.periods) : [];
+    const periodIndex = periodCode
+      ? trimesterPeriods.findIndex((item) => item.code === periodCode)
+      : -1;
+    const period =
+      (periodIndex >= 0 ? periodsWithSummary[periodIndex] : undefined) ??
+      periodsWithSummary[periodsWithSummary.length - 1];
+    const resolvedIndex = periodIndex >= 0 ? periodIndex : periodsWithSummary.length - 1;
+    const periodName =
+      resolvedIndex >= 0 ? formatTrimesterLabel(resolvedIndex) : "Période inconnue";
+    const subjects = period?.subjectsSummary?.subjects ?? [];
 
     const formattedSubjects: SubjectAppreciation[] = subjects.map((subject) => ({
       subjectName: subject.name,
@@ -139,5 +165,5 @@ export async function buildStudentRecap(
 }
 
 function findPeriodsWithSummary(grades: TeacherGradesResponse) {
-  return grades.periods.filter((period) => period.subjectsSummary);
+  return grades.periods.filter((period) => period.subjectsSummary).slice(0, TRIMESTER_COUNT);
 }

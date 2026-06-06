@@ -6,6 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 
 import { type Step, useAppreciationsStore } from "@/stores/appreciations";
 import { useAuthStore } from "@/stores/auth";
+import { useLevelsStore } from "@/stores/levels";
+import { formatTrimesterLabel, getTrimesterLabel, getTrimesterPeriods } from "@/lib/period";
 import { Button } from "@etd/ui/components/button";
 import { Label } from "@etd/ui/components/label";
 import { Textarea } from "@etd/ui/components/textarea";
@@ -30,6 +32,14 @@ import { DEFAULT_APPRECIATION, DEFAULT_PROMPT } from "@/actions/appreciations";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { trpcClient } from "@/utils/trpc";
 import { ScrollArea } from "@etd/ui/components/scroll-area";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@etd/ui/components/dropdown-menu";
+import { ChevronDownIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -77,6 +87,13 @@ function RemplirAppreciationsComponent() {
     reset,
   } = useAppreciationsStore();
   const authStore = useAuthStore();
+  const {
+    selectedClass,
+    selectedPeriod,
+    isLoading: isLevelsLoading,
+    getLevels,
+    setSelectedPeriod,
+  } = useLevelsStore();
 
   const [promptInstruction, setPromptInstruction] = useState("");
   const [userAppreciations, setUserAppreciations] = useState("");
@@ -108,6 +125,13 @@ function RemplirAppreciationsComponent() {
   const hasRecap = Boolean(firstStudentRecap);
   const isAuthenticated = authStore.isAuthenticated();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const availablePeriods = getTrimesterPeriods(selectedClass?.periods ?? []);
+
+  useEffect(() => {
+    if (authStore.session && authStore.account) {
+      getLevels(authStore.session, authStore.account.id);
+    }
+  }, [authStore.session, authStore.account, getLevels]);
 
   // Auto-scroll to bottom when new results are added
   useEffect(() => {
@@ -169,6 +193,41 @@ function RemplirAppreciationsComponent() {
                     <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                       {error}
                     </p>
+                  )}
+                  {availablePeriods.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Période</Label>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          openOnHover
+                          disabled={isLevelsLoading}
+                          render={
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="w-full justify-between"
+                            />
+                          }
+                        >
+                          {selectedPeriod && selectedClass
+                            ? getTrimesterLabel(selectedPeriod, selectedClass.periods)
+                            : "Sélectionner une période"}
+                          <ChevronDownIcon className="size-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                          <DropdownMenuGroup>
+                            {availablePeriods.map((period, index) => (
+                              <DropdownMenuItem
+                                key={period.code}
+                                onClick={() => setSelectedPeriod(period)}
+                              >
+                                {formatTrimesterLabel(index)}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   )}
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3 sm:flex-row">
@@ -232,6 +291,9 @@ function RemplirAppreciationsComponent() {
                     <p className="text-sm text-neutral-600">
                       {classSummary.classLabel} · {classSummary.levelName} ·{" "}
                       {classSummary.schoolName}
+                    </p>
+                    <p className="mt-1 text-sm text-neutral-500">
+                      Période : {classSummary.periodName}
                     </p>
                     {students && (
                       <p className="mt-1 text-sm text-neutral-500">
@@ -413,12 +475,14 @@ function RemplirAppreciationsComponent() {
                     </CardContent>
                     <CardFooter className="flex flex-wrap items-center justify-end gap-3">
                       <AlertDialog open={openBatchDialog} onOpenChange={setOpenBatchDialog}>
-                        <AlertDialogTrigger>
-                          <Button type="button" variant="destructive" disabled={isBatching}>
-                            {isBatching
-                              ? "Génération et remplissage de tous les élèves..."
-                              : "Générer et remplir pour tous les élèves"}
-                          </Button>
+                        <AlertDialogTrigger
+                          render={
+                            <Button type="button" variant="destructive" disabled={isBatching} />
+                          }
+                        >
+                          {isBatching
+                            ? "Génération et remplissage de tous les élèves..."
+                            : "Générer et remplir pour tous les élèves"}
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>

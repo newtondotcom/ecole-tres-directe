@@ -54,7 +54,7 @@ export async function generateBatchAppreciations({
 
   for (const student of council.students) {
     try {
-      const recap = await buildStudentRecap(session, student);
+      const recap = await buildStudentRecap(session, student, classSummary.periodCode);
       const appreciation = await trpcClient.mistral.generateAppreciation.mutate({
         prompt,
         subjects: recap.subjects,

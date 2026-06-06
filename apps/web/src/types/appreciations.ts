@@ -11,6 +11,7 @@ export type PrincipalClassSummary = {
   classId: number;
   classLabel: string;
   periodCode: string;
+  periodName: string;
 };
 
 export type SubjectAppreciation = {

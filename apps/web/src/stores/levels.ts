@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { teacherLevelsList, type Session } from "pawdirecte-teacher";
 import { toast } from "sonner";
+import { pickDefaultPeriod } from "@/lib/period";
 
 type School = {
   label: string;
@@ -19,7 +20,7 @@ type ClassItem = {
   periods: Period[];
 };
 
-type Period = {
+export type Period = {
   code: string;
   name?: string;
 };
@@ -35,6 +36,7 @@ type LevelsStoreState = {
   selectedSchool?: School;
   selectedLevel?: Level;
   selectedClass?: ClassItem;
+  selectedPeriod?: Period;
 };
 
 type LevelsStoreActions = {
@@ -43,6 +45,7 @@ type LevelsStoreActions = {
   setSelectedSchool: (school: School | undefined) => void;
   setSelectedLevel: (level: Level | undefined) => void;
   setSelectedClass: (classItem: ClassItem | undefined) => void;
+  setSelectedPeriod: (period: Period | undefined) => void;
   reset: () => void;
 };
 
@@ -55,7 +58,30 @@ const initialState: LevelsStoreState = {
   selectedSchool: undefined,
   selectedLevel: undefined,
   selectedClass: undefined,
+  selectedPeriod: undefined,
 };
+
+function findPrincipalClass(levels: LevelsData): ClassItem | undefined {
+  for (const school of levels.schools) {
+    for (const level of school.levels) {
+      for (const classItem of level.classes) {
+        if (classItem.isCurrentUserPrincipal) return classItem;
+      }
+    }
+  }
+  return undefined;
+}
+
+function findClassContext(levels: LevelsData, classItem: ClassItem) {
+  for (const school of levels.schools) {
+    for (const level of school.levels) {
+      if (level.classes.some((item) => item.id === classItem.id)) {
+        return { school, level, classItem };
+      }
+    }
+  }
+  return undefined;
+}
 
 export const useLevelsStore = create<LevelsStore>()((set, get) => ({
   ...initialState,
@@ -65,16 +91,22 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
 
     try {
       const levels = await teacherLevelsList(session, teacherId);
-      console.log("levels", levels);
+      const principalClass = findPrincipalClass(levels);
       const firstSchool = levels.schools[0];
-      const firstLevel = firstSchool?.levels[0];
-      const firstClass = firstLevel?.classes[0];
+      const context = principalClass
+        ? findClassContext(levels, principalClass)
+        : firstSchool
+          ? { school: firstSchool, level: firstSchool.levels[0], classItem: firstSchool.levels[0]?.classes[0] }
+          : undefined;
+      const selectedClass = context?.classItem;
+      const selectedPeriod = selectedClass ? pickDefaultPeriod(selectedClass.periods) : undefined;
 
       set({
         levels,
-        selectedSchool: firstSchool,
-        selectedLevel: firstLevel,
-        selectedClass: firstClass,
+        selectedSchool: context?.school ?? firstSchool,
+        selectedLevel: context?.level ?? firstSchool?.levels[0],
+        selectedClass,
+        selectedPeriod,
         isLoading: false,
         error: undefined,
       });
@@ -87,6 +119,7 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
         selectedSchool: undefined,
         selectedLevel: undefined,
         selectedClass: undefined,
+        selectedPeriod: undefined,
         isLoading: false,
         error: errorMessage,
       });
@@ -99,7 +132,6 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
     const state = get();
 
     if (state.levels) {
-      console.log("state.levels", state.levels);
       return state.levels;
     }
 
@@ -112,6 +144,7 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
       selectedSchool: school,
       selectedLevel: undefined,
       selectedClass: undefined,
+      selectedPeriod: undefined,
     });
   },
 
@@ -119,11 +152,19 @@ export const useLevelsStore = create<LevelsStore>()((set, get) => ({
     set({
       selectedLevel: level,
       selectedClass: undefined,
+      selectedPeriod: undefined,
     });
   },
 
   setSelectedClass: (classItem: ClassItem | undefined) => {
-    set({ selectedClass: classItem });
+    set({
+      selectedClass: classItem,
+      selectedPeriod: classItem ? pickDefaultPeriod(classItem.periods) : undefined,
+    });
+  },
+
+  setSelectedPeriod: (period: Period | undefined) => {
+    set({ selectedPeriod: period });
   },
 
   reset: () => {
