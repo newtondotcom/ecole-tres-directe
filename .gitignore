@@ -48,10 +48,3 @@ coverage
 .cache
 tmp
 temp
-
-# START Ruler Generated Files
-/.cursor/mcp.json
-/.cursor/mcp.json.bak
-/AGENTS.md
-/AGENTS.md.bak
-# END Ruler Generated Files

@@ -9,30 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PolitiquesRouteImport } from './routes/politiques'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EtdUnblockRouteImport } from './routes/etd-unblock'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as EtdUnblockRouteImport } from './routes/etd-unblock'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PolitiquesRouteImport } from './routes/politiques'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
-import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
-import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
 import { Route as DashboardCorrectionAppreciationsRouteImport } from './routes/dashboard/correction-appreciations'
+import { Route as DashboardFeedbackRouteImport } from './routes/dashboard/feedback'
+import { Route as DashboardRemplirAppreciationsRouteImport } from './routes/dashboard/remplir-appreciations'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 
-const PolitiquesRoute = PolitiquesRouteImport.update({
-  id: '/politiques',
-  path: '/politiques',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EtdUnblockRoute = EtdUnblockRouteImport.update({
-  id: '/etd-unblock',
-  path: '/etd-unblock',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -40,30 +30,24 @@ const DashboardRouteRoute = DashboardRouteRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const EtdUnblockRoute = EtdUnblockRouteImport.update({
+  id: '/etd-unblock',
+  path: '/etd-unblock',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolitiquesRoute = PolitiquesRouteImport.update({
+  id: '/politiques',
+  path: '/politiques',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardRemplirAppreciationsRoute =
-  DashboardRemplirAppreciationsRouteImport.update({
-    id: '/remplir-appreciations',
-    path: '/remplir-appreciations',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any)
-const DashboardFeedbackRoute = DashboardFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardCorrectionAppreciationsRoute =
@@ -72,6 +56,22 @@ const DashboardCorrectionAppreciationsRoute =
     path: '/correction-appreciations',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardFeedbackRoute = DashboardFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardRemplirAppreciationsRoute =
+  DashboardRemplirAppreciationsRouteImport.update({
+    id: '/remplir-appreciations',
+    path: '/remplir-appreciations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -157,25 +157,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/politiques': {
-      id: '/politiques'
-      path: '/politiques'
-      fullPath: '/politiques'
-      preLoaderRoute: typeof PolitiquesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etd-unblock': {
-      id: '/etd-unblock'
-      path: '/etd-unblock'
-      fullPath: '/etd-unblock'
-      preLoaderRoute: typeof EtdUnblockRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -185,11 +171,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/etd-unblock': {
+      id: '/etd-unblock'
+      path: '/etd-unblock'
+      fullPath: '/etd-unblock'
+      preLoaderRoute: typeof EtdUnblockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politiques': {
+      id: '/politiques'
+      path: '/politiques'
+      fullPath: '/politiques'
+      preLoaderRoute: typeof PolitiquesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -199,18 +199,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
-      path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/remplir-appreciations': {
-      id: '/dashboard/remplir-appreciations'
-      path: '/remplir-appreciations'
-      fullPath: '/dashboard/remplir-appreciations'
-      preLoaderRoute: typeof DashboardRemplirAppreciationsRouteImport
+    '/dashboard/correction-appreciations': {
+      id: '/dashboard/correction-appreciations'
+      path: '/correction-appreciations'
+      fullPath: '/dashboard/correction-appreciations'
+      preLoaderRoute: typeof DashboardCorrectionAppreciationsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/feedback': {
@@ -220,11 +213,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardFeedbackRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/correction-appreciations': {
-      id: '/dashboard/correction-appreciations'
-      path: '/correction-appreciations'
-      fullPath: '/dashboard/correction-appreciations'
-      preLoaderRoute: typeof DashboardCorrectionAppreciationsRouteImport
+    '/dashboard/remplir-appreciations': {
+      id: '/dashboard/remplir-appreciations'
+      path: '/remplir-appreciations'
+      fullPath: '/dashboard/remplir-appreciations'
+      preLoaderRoute: typeof DashboardRemplirAppreciationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
   }
